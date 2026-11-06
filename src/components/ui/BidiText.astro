@@ -1,0 +1,15 @@
+---
+/**
+ * Renders a string; on Hebrew pages, Latin/number runs (e.g. "Betaflight / INAV", "6S") are wrapped
+ * in <bdi> so mixed-direction text never scrambles. On English pages it renders plain text.
+ */
+import { splitBidi, type Lang } from '../../i18n/utils';
+
+interface Props {
+  text: string;
+  lang: Lang;
+}
+const { text, lang } = Astro.props;
+const segments = lang === 'he' ? splitBidi(text) : [{ text, latin: false }];
+---
+{segments.map((s) => (s.latin ? <bdi>{s.text}</bdi> : s.text))}

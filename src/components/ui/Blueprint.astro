@@ -1,0 +1,67 @@
+---
+/**
+ * Decorative engineering drawing of a 5" quad (top view) with dimension lines.
+ * Pure decoration (aria-hidden), drawn with the accent color at low opacity.
+ * Labels are technical Latin markings, identical in both languages.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+const motors = [
+  { x: 150, y: 150, n: 'M4' },
+  { x: 450, y: 150, n: 'M2' },
+  { x: 150, y: 450, n: 'M3' },
+  { x: 450, y: 450, n: 'M1' },
+];
+---
+<svg class:list={['bp', className]} viewBox="0 0 600 600" fill="none" aria-hidden="true" focusable="false">
+  <g class="bp__faint">
+    {motors.map((m) => <circle cx={m.x} cy={m.y} r="112" stroke-dasharray="3 7" />)}
+    <circle cx="300" cy="300" r="250" stroke-dasharray="1 9" />
+    <path d="M300 20v560M20 300h560" stroke-dasharray="2 10" />
+  </g>
+  <g class="bp__line">
+    {/* arms */}
+    <path d="M178 178 262 262M422 178l-84 84M178 422l84-84M422 422l-84-84" stroke-width="10" stroke-linecap="round" />
+    {/* body */}
+    <rect x="245" y="225" width="110" height="150" rx="16" />
+    <rect x="270" y="260" width="60" height="60" rx="6" />
+    <circle cx="300" cy="290" r="4" />
+    {/* camera */}
+    <rect x="275" y="200" width="50" height="22" rx="5" />
+    {/* motors */}
+    {motors.map((m) => (
+      <>
+        <circle cx={m.x} cy={m.y} r="28" />
+        <circle cx={m.x} cy={m.y} r="9" />
+      </>
+    ))}
+  </g>
+  <g class="bp__dim">
+    {/* horizontal dimension: motor-to-motor */}
+    <path d="M150 40h300M150 32v16M450 32v16" />
+    <path d="M150 40l10-5v10ZM450 40l-10-5v10Z" class="bp__fill" />
+    {/* diagonal wheelbase */}
+    <path d="M150 450 450 150" stroke-dasharray="6 6" />
+    {/* vertical dimension */}
+    <path d="M560 150v300M552 150h16M552 450h16" />
+  </g>
+  <g class="bp__text">
+    <text x="300" y="30" text-anchor="middle">300 mm</text>
+    <text x="318" y="318" text-anchor="start">225 mm</text>
+    <text x="548" y="300" text-anchor="end">300</text>
+    {motors.map((m) => <text x={m.x} y={m.y + 52} text-anchor="middle">{m.n}</text>)}
+    <text x="300" y="400" text-anchor="middle">FC · F405</text>
+    <text x="30" y="585">REV.B · 5" FREESTYLE</text>
+  </g>
+</svg>
+
+<style>
+  .bp { display: block; inline-size: 100%; block-size: auto; direction: ltr; }
+  .bp__faint { stroke: var(--accent-10); stroke-width: 1; }
+  .bp__line { stroke: var(--accent-35); stroke-width: 1.5; }
+  .bp__dim { stroke: var(--accent-20); stroke-width: 1; }
+  .bp__fill { fill: var(--accent-35); stroke: none; }
+  .bp__text { fill: var(--accent-35); font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em; }
+</style>

@@ -1,0 +1,229 @@
+---
+/**
+ * Services: data-driven glass cards (src/content/site.ts → services.items) with the custom
+ * line icons, staggered scroll reveal, and a faint blueprint drawing in the background.
+ */
+import SectionHeading from '../ui/SectionHeading.astro';
+import GlassCard from '../ui/GlassCard.astro';
+import Icon from '../ui/Icon.astro';
+import BidiText from '../ui/BidiText.astro';
+import Blueprint from '../ui/Blueprint.astro';
+import { content } from '../../content/site';
+import type { Lang } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const h = t.sections.services;
+const total = String(t.services.items.length).padStart(2, '0');
+---
+<section class="section section--band services" id="services" data-section aria-labelledby="services-title">
+  <div class="services__bp" aria-hidden="true"><Blueprint /></div>
+
+  <div class="container">
+    <SectionHeading num={h.num} label={h.label} title={h.title} lede={t.services.lede} id="services-title" />
+
+    <ul class="svc-grid" role="list">
+      {t.services.items.map((item, i) => (
+        <GlassCard as="li" class="svc" data-reveal style={`--i: ${i}`}>
+          <div class="svc__top">
+            <span class="svc__icon">
+              <span class="svc__icon-ring" aria-hidden="true"></span>
+              <Icon name={item.icon} size={30} strokeWidth={1.4} />
+            </span>
+            <span class="svc__num" dir="ltr" aria-hidden="true">{String(i + 1).padStart(2, '0')}<span>/{total}</span></span>
+          </div>
+          <h3 class="svc__title t-h3">{item.title}</h3>
+          <p class="svc__text"><BidiText text={item.text} lang={lang} /></p>
+          <ul class="svc__points" role="list">
+            {item.points.map((p) => (
+              <li><BidiText text={p} lang={lang} /></li>
+            ))}
+          </ul>
+        </GlassCard>
+      ))}
+    </ul>
+
+    <p class="svc-cta" data-reveal>
+      <span>{t.services.ctaText}</span>
+      <a class="svc-cta__link" href="#contact">
+        {t.services.ctaLink}
+        <Icon name="arrow" size={18} />
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .services { isolation: isolate; }
+  .services__bp {
+    position: absolute;
+    inset-block-start: 4%;
+    inset-inline-end: -6%;
+    inline-size: min(46rem, 70vw);
+    opacity: 0.55;
+    z-index: -1;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent);
+    mask-image: radial-gradient(closest-side, #000 55%, transparent);
+  }
+
+  .svc-grid {
+    display: grid;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+  }
+  @media (min-width: 768px) { .svc-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .svc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  :global(.svc) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+  }
+  .svc__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-block-end: var(--space-4);
+  }
+  .svc__icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: 4rem;
+    block-size: 4rem;
+    border-radius: var(--radius-md);
+    color: var(--accent);
+    background:
+      radial-gradient(circle at 50% 35%, var(--accent-20), transparent 70%),
+      color-mix(in oklab, var(--surface-1) 90%, transparent);
+    border: 1px solid var(--accent-20);
+    filter: drop-shadow(0 0 10px var(--accent-35));
+  }
+  .svc__icon :global(svg) { transition: transform var(--dur-slow) var(--ease-spring); }
+  .svc__icon-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: calc(var(--radius-md) + 6px);
+    border: 1px dashed var(--accent-35);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-spring);
+  }
+  .svc__num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-lg);
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  .svc__num span { color: var(--text-faint); }
+
+  .svc__title { font-size: clamp(1.3rem, 1.15rem + 0.5vw, 1.6rem); }
+  .svc__text { color: var(--text-muted); }
+
+  .svc__points {
+    display: grid;
+    gap: var(--space-2);
+    margin: auto 0 0;
+    padding: var(--space-4) 0 0;
+    border-block-start: 1px solid var(--line);
+    font-size: var(--fs-small);
+    color: var(--text);
+  }
+  .svc__points li {
+    position: relative;
+    padding-inline-start: 1.4rem;
+  }
+  .svc__points li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0.15rem;
+    inset-block-start: 0.6em;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 2px;
+    border: 1.5px solid var(--accent);
+    transform: rotate(45deg);
+    box-shadow: 0 0 6px var(--accent-35);
+  }
+  /* spacing between text and the points list */
+  .svc__text { margin-block-end: var(--space-4); }
+
+  @media (hover: hover) {
+    :global(.svc:hover) .svc__icon :global(svg) { transform: scale(1.08) rotate(-6deg); }
+    :global(.svc:hover) .svc__icon-ring { opacity: 1; transform: none; }
+  }
+
+  /* ---- CTA line ---- */
+  .svc-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2) var(--space-4);
+    margin-block-start: var(--space-8);
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .svc-cta__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--accent);
+    font-weight: 500;
+    padding-block: 2px;
+  }
+  .svc-cta__link::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: -2px;
+    block-size: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    transform: scaleX(0);
+    transform-origin: var(--origin-inline-start);
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+  .svc-cta__link :global(svg) { transition: transform var(--dur-base) var(--ease-spring); }
+  @media (hover: hover) {
+    .svc-cta__link:hover::after { transform: scaleX(1); }
+    .svc-cta__link:hover :global(svg) { transform: translateX(4px); }
+    :global([dir='rtl']) .svc-cta__link:hover :global(svg) { transform: scaleX(-1) translateX(4px); }
+  }
+  .svc-cta__link:focus-visible::after { transform: scaleX(1); }
+
+  /* Tablet (2 columns): an odd last card spans the row and splits into text | points */
+  @media (min-width: 768px) and (max-width: 1099px) {
+    :global(.svc:last-child:nth-child(odd)) {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-7);
+      align-content: start;
+    }
+    :global(.svc:last-child:nth-child(odd)) > :not(.svc__points) { grid-column: 1; }
+    :global(.svc:last-child:nth-child(odd)) .svc__points {
+      grid-column: 2;
+      grid-row: 1 / span 3;
+      align-self: center;
+      margin: 0;
+      padding: 0;
+      padding-inline-start: var(--space-6);
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--line);
+    }
+    :global(.svc:last-child:nth-child(odd)) .svc__text { margin-block-end: 0; }
+  }
+
+  @media (max-width: 767px) {
+    .services__bp { inline-size: 120vw; inset-inline-end: -40%; inset-block-start: 2%; opacity: 0.35; }
+  }
+</style>

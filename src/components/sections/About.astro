@@ -1,0 +1,145 @@
+---
+/**
+ * About: story + stats beside a HUD-framed photo (photo at the inline start on desktop,
+ * on top when stacked on mobile). The frame "locks on" when it scrolls into view.
+ */
+import { Picture } from 'astro:assets';
+import SectionHeading from '../ui/SectionHeading.astro';
+import HudFrame from '../ui/HudFrame.astro';
+import BidiText from '../ui/BidiText.astro';
+import { content, shared } from '../../content/site';
+import type { Lang } from '../../i18n/utils';
+// TODO: replace with a real photo of the client / his workbench
+import aboutImg from '../../assets/about/about-builder.jpg';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const h = t.sections.about;
+---
+<section class="section about" id="about" data-section aria-labelledby="about-title">
+  <div class="container about__grid">
+    <div class="about__media">
+      <div class="about__glow glow-pool" aria-hidden="true"></div>
+      <div class="about__glow about__glow--2 glow-pool glow-pool--secondary" aria-hidden="true"></div>
+      <HudFrame labels={shared.about.frameLabels} rec ratio="4 / 5" lock>
+        <Picture
+          src={aboutImg}
+          alt={t.about.imageAlt}
+          formats={['avif', 'webp']}
+          widths={[400, 640, 880, 1100]}
+          sizes="(max-width: 959px) min(92vw, 30rem), 34vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </HudFrame>
+    </div>
+
+    <div class="about__copy">
+      <SectionHeading num={h.num} label={h.label} title={h.title} id="about-title" />
+      <div class="about__text">
+        {t.about.paragraphs.map((p, i) => (
+          <p class:list={[i === 0 && 'about__first']} data-reveal style={`--i: ${i + 2}`}>
+            <BidiText text={p} lang={lang} />
+          </p>
+        ))}
+      </div>
+      <dl class="stats" data-reveal style="--i: 4">
+        {t.about.stats.map((s) => (
+          <div class="stat">
+            <dt class="stat__label">{s.label}</dt>
+            <dd class="stat__value" dir="ltr">{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+  }
+  .about__media {
+    position: relative;
+    inline-size: min(100%, 30rem);
+    margin-inline: auto;
+    padding: var(--space-3);
+  }
+  .about__glow {
+    inline-size: 130%;
+    inset-block-start: -15%;
+    inset-inline-start: -15%;
+    z-index: -1;
+    opacity: 0.9;
+  }
+  .about__glow--2 {
+    inline-size: 90%;
+    inset-block-start: 40%;
+    inset-inline-start: 30%;
+    opacity: 0.7;
+  }
+
+  .about__copy :global(.sh) { margin-block-end: var(--space-6); }
+  .about__text { display: grid; gap: var(--space-4); max-inline-size: 38rem; color: var(--text-muted); }
+  .about__first { color: var(--text); font-size: var(--fs-lead); line-height: 1.6; }
+
+  /* ---- Stats: telemetry readouts ---- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-block-start: var(--space-7);
+    max-inline-size: 38rem;
+    border-block: 1px solid var(--line);
+  }
+  .stat {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    align-content: start;
+    gap: var(--space-2);
+    padding-block: var(--space-5);
+    padding-inline: var(--space-4);
+    position: relative;
+  }
+  .stat:first-child { padding-inline-start: 0; }
+  .stat + .stat { border-inline-start: 1px solid var(--line); }
+  .stat::before {
+    /* small accent tick on the top edge, like a gauge marker */
+    content: '';
+    position: absolute;
+    inset-block-start: -1px;
+    inset-inline-start: var(--space-4);
+    inline-size: 24px;
+    block-size: 1.5px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .stat:first-child::before { inset-inline-start: 0; }
+  .stat__value {
+    order: -1; /* value above its label; <dt> stays first in the markup */
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-align: start;
+  }
+  :global([dir='rtl']) .stat__value { text-align: end; }
+  .stat__label { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.35; }
+
+  @media (min-width: 960px) {
+    .about__grid { grid-template-columns: 0.9fr 1.1fr; gap: var(--space-9); }
+    .about__media { inline-size: 100%; margin-inline: 0; }
+  }
+  @media (max-width: 480px) {
+    .stat { padding-inline: var(--space-3); }
+    .stat::before { inset-inline-start: var(--space-3); }
+    .stat__label { font-size: 0.75rem; }
+  }
+</style>

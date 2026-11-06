@@ -3,6 +3,8 @@
  * Viewfinder-style frame: four accent corner brackets, edge ticks, scan tint,
  * and small decorative mono labels in the corners (aria-hidden).
  * The framed content (a photo) is passed in the default slot and never mirrors.
+ * lock = when the frame scrolls into view (reveal adds .is-visible), the brackets "lock on"
+ * like a camera acquiring focus and a scan line sweeps once.
  */
 interface Props {
   labels?: { start?: string; end?: string; bottomStart?: string; bottomEnd?: string };
@@ -10,13 +12,21 @@ interface Props {
   recLabel?: string;
   class?: string;
   ratio?: string;
+  lock?: boolean;
+  [key: string]: unknown;
 }
-const { labels = {}, rec = false, recLabel = 'REC', class: className, ratio } = Astro.props;
+const { labels = {}, rec = false, recLabel = 'REC', class: className, ratio, lock = false, ...rest } = Astro.props;
 ---
-<figure class:list={['hud', className]} style={ratio ? `--hud-ratio: ${ratio}` : undefined}>
+<figure
+  class:list={['hud', lock && 'hud--lock', className]}
+  style={ratio ? `--hud-ratio: ${ratio}` : undefined}
+  data-reveal={lock ? '' : undefined}
+  {...rest}
+>
   <div class="hud__media">
     <slot />
     <span class="hud__scan" aria-hidden="true"></span>
+    {lock && <span class="hud__sweep" aria-hidden="true"></span>}
   </div>
 
   <span class="hud__corner hud__corner--ss" aria-hidden="true"></span>
@@ -142,8 +152,41 @@ const { labels = {}, rec = false, recLabel = 'REC', class: className, ratio } = 
   }
   @keyframes rec-blink { 50% { opacity: 0.15; } }
 
+  /* ---- Lock-on (scroll reveal) ---- */
+  .hud__sweep {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent calc(100% - 2px), var(--accent) calc(100% - 1px), transparent),
+      linear-gradient(180deg, transparent 70%, var(--accent-10));
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
+  }
+  :global(.js) .hud--lock .hud__corner,
+  :global(.js) .hud--lock .hud__label,
+  :global(.js) .hud--lock .hud__cross {
+    opacity: 0;
+    transform: scale(1.6);
+    transition: opacity 500ms var(--ease-out), transform 700ms var(--ease-spring);
+  }
+  :global(.js) .hud--lock .hud__label { transform: none; }
+  :global(.js) .hud--lock.is-visible .hud__corner { opacity: 1; transform: none; transition-delay: 250ms; }
+  :global(.js) .hud--lock.is-visible .hud__cross { opacity: 0.5; transform: none; transition-delay: 450ms; }
+  :global(.js) .hud--lock.is-visible .hud__label { opacity: 0.85; transition-delay: 800ms; }
+  .hud--lock.is-visible .hud__sweep { animation: hud-sweep 1400ms var(--ease-in-out) 350ms both; }
+  @keyframes hud-sweep {
+    0% { transform: translate3d(0, -100%, 0); opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { transform: translate3d(0, 100%, 0); opacity: 0; }
+  }
+
   @media (max-width: 640px) {
     .hud { --c: 16px; --o: -7px; }
     .hud__label { font-size: 0.5625rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hud__sweep { display: none; }
+    .hud__rec-dot { animation: none; }
   }
 </style>

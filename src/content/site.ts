@@ -29,6 +29,10 @@ export const shared = {
     /** Used by the 'framed' mode corner labels. TODO: real coordinates (or keep decorative). */
     frameLabels: { end: 'CAM-01', bottomStart: '32.08°N 34.78°E', bottomEnd: '1080p · 120fps' },
   },
+  about: {
+    /** Decorative HUD frame labels around the About photo. TODO: real values or keep decorative. */
+    frameLabels: { end: 'CAM-02', bottomStart: 'ISO 400 · f/2.8', bottomEnd: '32.08°N 34.78°E' },
+  },
   /** Language names, each written in its own language (used by the flag toggle). */
   langNames: { he: 'עברית', en: 'English' } as Record<Lang, string>,
   /** Platform names are proper nouns, identical in both languages (used as aria-labels). */
@@ -81,7 +85,47 @@ const he = {
     services: { num: '02', label: 'שירותים', title: 'מה אני עושה.' },
     builds: { num: '03', label: 'הבנייה שלי', title: 'רחפנים שיצאו מהסדנה.' },
     contact: { num: '04', label: 'צור קשר', title: 'בואו נבנה משהו שעף.' },
-  } as Record<SectionId, { num: string; label: string; title: string }>,
+  } as Record<SectionId, { num: string; label: string; title: string; lede?: string }>,
+  about: {
+    // TODO: the client's real story (placeholder copy)
+    paragraphs: [
+      'התחלתי לטוס לפני יותר משמונה שנים עם רחפן מדף קטן, שהתרסק כבר בשבוע הראשון. במקום לקנות חדש, פירקתי אותו כדי להבין מה נשבר — ומשם זה כבר לא עצר.',
+      'היום אני מתכנן ובונה רחפני FPV מאפס: בוחר כל חלק, מלחים, מכוונן את הבקר ובודק כל רחפן בשטח לפני שהוא יוצא מהסדנה. אותה תשומת לב נכנסת לכל תיקון ושדרוג — כי רחפן טוב צריך להרגיש כמו המשך של היד.',
+    ],
+    // TODO: real numbers from the client
+    stats: [
+      { value: '8+', label: 'שנים באוויר' },
+      { value: '150+', label: 'רחפנים נבנו ותוקנו' },
+      { value: '100%', label: 'נבדקים בטיסה לפני מסירה' },
+    ],
+    imageAlt: 'רחפן FPV על שולחן העבודה, מוקף בציור אור', // TODO: update when the real photo arrives
+  },
+  services: {
+    lede: 'מבנייה מאפס ועד כיוונון עדין — כל מה שהרחפן שלך צריך, תחת קורת גג אחת.',
+    // TODO: final service copy from the client
+    items: [
+      {
+        icon: 'build',
+        title: 'בנייה לפי הזמנה',
+        text: 'רחפן שמתוכנן סביבך: סגנון הטיסה, התקציב והמטרה — מבחירת החלקים ועד טיסת הבכורה.',
+        points: ['תכנון לפי סגנון טיסה ותקציב', 'חלקים איכותיים והלחמות נקיות', 'כיוונון וטיסת מבחן לפני מסירה'],
+      },
+      {
+        icon: 'repair',
+        title: 'תיקונים',
+        text: 'התרסקות, מנוע שלא מסתובב או וידאו שנעלם? אבחון מסודר ותיקון שמחזיר אותך לאוויר.',
+        points: ['אבחון תקלות מהיר', 'החלפת מנועים, ESC, בקרים ושלדות', 'תיקונים אחרי התרסקות'],
+      },
+      {
+        icon: 'tune',
+        title: 'שדרוגים וכיוונון',
+        text: 'להוציא מהרחפן את המקסימום: טיסה חלקה יותר, תגובה חדה יותר וזמן טיסה ארוך יותר.',
+        points: ['כיוונון PID ופילטרים', 'שדרוג לווידאו דיגיטלי ו-VTX', 'הגדרות Betaflight / INAV'],
+      },
+    ] as { icon: 'build' | 'repair' | 'tune'; title: string; text: string; points: string[] }[],
+    ctaText: 'לא בטוחים מה בדיוק צריך?',
+    ctaLink: 'ספרו לי על הרחפן',
+  },
   footer: {
     // TODO: final copy from the client
     tagline: 'רחפני FPV שנבנים, מתוקנים ומכוונים בעבודת יד.',
@@ -127,6 +171,46 @@ const en: typeof he = {
     services: { num: '02', label: 'Services', title: 'What I do.' },
     builds: { num: '03', label: 'My builds', title: 'Straight out of the workshop.' },
     contact: { num: '04', label: 'Contact', title: "Let's build something that flies." },
+  },
+  about: {
+    // TODO: the client's real story (placeholder copy)
+    paragraphs: [
+      'I started flying more than eight years ago with a small off-the-shelf drone that crashed in its very first week. Instead of buying a new one, I took it apart to understand what broke — and I never stopped.',
+      'Today I design and build FPV drones from scratch: choosing every part, soldering, tuning the flight controller and field-testing each quad before it leaves the workshop. The same care goes into every repair and upgrade — because a good drone should feel like an extension of your hand.',
+    ],
+    // TODO: real numbers from the client
+    stats: [
+      { value: '8+', label: 'Years in the air' },
+      { value: '150+', label: 'Drones built & repaired' },
+      { value: '100%', label: 'Flight-tested before handover' },
+    ],
+    imageAlt: 'FPV drone on the workbench, surrounded by light painting', // TODO: update when the real photo arrives
+  },
+  services: {
+    lede: 'From a build from scratch to fine tuning — everything your drone needs, under one roof.',
+    // TODO: final service copy from the client
+    items: [
+      {
+        icon: 'build',
+        title: 'Custom builds to order',
+        text: 'A drone designed around you: your flying style, budget and goals — from parts selection to the maiden flight.',
+        points: ['Planned around your flying style and budget', 'Quality parts and clean soldering', 'Tuned and test-flown before handover'],
+      },
+      {
+        icon: 'repair',
+        title: 'Repairs & fixes',
+        text: "A crash, a motor that won't spin or video that cuts out? Proper diagnosis and a repair that gets you back in the air.",
+        points: ['Fast fault diagnosis', 'Motor, ESC, flight controller and frame swaps', 'Post-crash repairs'],
+      },
+      {
+        icon: 'tune',
+        title: 'Upgrades & tuning',
+        text: 'Get the most out of your drone: smoother flight, a sharper response and longer flight times.',
+        points: ['PID and filter tuning', 'Digital video and VTX upgrades', 'Betaflight / INAV setup'],
+      },
+    ],
+    ctaText: 'Not sure exactly what you need?',
+    ctaLink: 'Tell me about your drone',
   },
   footer: {
     // TODO: final copy from the client
