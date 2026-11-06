@@ -9,9 +9,11 @@ The full list of every `TODO` marker in the code is generated in Phase 6. This f
 - [ ] **Social links.** `shared.social` URLs point to platform home pages. Replace them with the client's profiles, or remove the ones he doesn't use.
 - [ ] **Photos.** The hero, About and build images are placeholders (see `CREDITS.md`). Replace them with the client's own photos.
 - [ ] **Copy.** All Hebrew and English text in `site.ts` and the build descriptions is placeholder copy written by us. The client must approve or replace it.
-- [ ] **Web3Forms key.** Set `PUBLIC_WEB3FORMS_KEY` in the hosting environment (Phase 5).
-- [ ] **Production URL.** `site` in `astro.config.mjs` is a placeholder domain.
+- [ ] **Web3Forms key.** Create one at web3forms.com with the client's email, then set `PUBLIC_WEB3FORMS_KEY` in the host's environment (see `DEPLOY.md`). Without it the form shows its error state and tells visitors to use WhatsApp.
+- [ ] **Production URL.** Set `SITE_URL` in the host's environment, otherwise canonical and `og:image` URLs use a placeholder domain and WhatsApp link previews break. After changing the hero photo or the copy, run `npm run gen:og` and re-check `og-he.jpg`.
 
 ## SHOULD
+- [ ] Contact "facts" (response time, service area) in `site.ts` → `contact.facts` are placeholders. Confirm them or set `facts: []` to hide them.
+- [ ] Test a real form submission in both languages after deploy.
 - [ ] HUD decorative labels (coordinates `32.08°N 34.78°E`, `CAM-01`, camera settings) are decorative placeholders. Keep them or personalize them.
 - [ ] Decide whether the site stays `noindex`, set by `shared.seo.noindex` in `site.ts`.

@@ -2,12 +2,13 @@
 /**
  * Base document: <html lang dir>, head meta, robots switch, hreflang alternates, hero-font preload,
  * design tokens, and the fixed background atmosphere (blueprint grid, glow, noise).
- * (Full Open Graph / social preview tags are added in Phase 5.)
+ * Open Graph + Twitter tags per language (1200×630 images in public/og/), so links shared on
+ * WhatsApp/Telegram/Facebook show a proper preview card.
  */
 import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
-import { shared } from '../content/site';
+import { content, shared } from '../content/site';
 import { DIR, LANGS, langRoot, type Lang } from '../i18n/utils';
 // Preload only the display weight used by the hero headline, in the page's own script.
 import rubik800He from '@fontsource/rubik/files/rubik-hebrew-800-normal.woff2?url';
@@ -25,6 +26,10 @@ interface Props {
 const { lang, title, description, noindex = shared.seo.noindex, localized = false, skipLabel } = Astro.props;
 const site = Astro.site ?? new URL(Astro.url.origin);
 const preloadFont = lang === 'he' ? rubik800He : rubik800La;
+const meta = content[lang].meta;
+const pageUrl = new URL(langRoot(lang), site).href;
+const ogImage = new URL(`/og/og-${lang}.jpg`, site).href;
+const otherLang = LANGS.find((l) => l !== lang)!;
 ---
 <!doctype html>
 <html lang={lang} dir={DIR[lang]}>
@@ -40,9 +45,31 @@ const preloadFont = lang === 'he' ? rubik800He : rubik800La;
     <link rel="preload" href={preloadFont} as="font" type="font/woff2" crossorigin />
     {localized && (
       <>
-        <link rel="canonical" href={new URL(langRoot(lang), site).href} />
+        <link rel="canonical" href={pageUrl} />
         {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(langRoot(l), site).href} />)}
         <link rel="alternate" hreflang="x-default" href={new URL(langRoot('he'), site).href} />
+      </>
+    )}
+    {localized && (
+      <>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={shared.brand} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:locale" content={meta.ogLocale} />
+        <meta property="og:locale:alternate" content={content[otherLang].meta.ogLocale} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:secure_url" content={ogImage} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={meta.ogImageAlt} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="twitter:image:alt" content={meta.ogImageAlt} />
       </>
     )}
     <script is:inline>document.documentElement.classList.add('js');</script>

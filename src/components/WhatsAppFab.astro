@@ -1,5 +1,9 @@
 ---
-/** Floating WhatsApp button with a gentle pulse ring. Pinned to the inline-end corner. */
+/**
+ * Floating WhatsApp button with a gentle pulse ring, pinned to the inline-end corner.
+ * It steps aside (fade + scale) while the Contact section is in view (that section has its own
+ * big WhatsApp button) and while the mobile menu or the lightbox is open.
+ */
 import Icon from './ui/Icon.astro';
 
 interface Props {
@@ -15,6 +19,7 @@ const { href, label, floating = true } = Astro.props;
   target="_blank"
   rel="noopener noreferrer"
   aria-label={label}
+  data-tip={floating ? label : undefined}
 >
   <span class="wa__pulse" aria-hidden="true"></span>
   <Icon name="whatsapp" size={28} />
@@ -31,14 +36,27 @@ const { href, label, floating = true } = Astro.props;
     color: #fff;
     background: radial-gradient(circle at 30% 25%, #3ce07a, #1faa55 70%);
     box-shadow: 0 10px 30px -6px rgb(31 170 85 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.25);
-    transition: transform var(--dur-base) var(--ease-spring);
+    transition: transform var(--dur-base) var(--ease-spring), opacity var(--dur-base) var(--ease-out);
   }
   .wa--floating {
     position: fixed;
     inset-block-end: max(1.25rem, env(safe-area-inset-bottom));
     inset-inline-end: 1.25rem;
     z-index: var(--z-fab);
+    animation: wa-in 700ms var(--ease-spring) 1.2s backwards;
   }
+  @keyframes wa-in { from { opacity: 0; transform: scale(0.4); } }
+
+  /* Step aside: contact section in view, mobile menu or lightbox open */
+  :global(html[data-section='contact']) .wa--floating,
+  :global(html.no-scroll) .wa--floating {
+    opacity: 0;
+    transform: scale(0.6);
+    pointer-events: none;
+    visibility: hidden;
+    transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
+  }
+
   .wa__pulse {
     position: absolute;
     inset: 0;
@@ -51,11 +69,37 @@ const { href, label, floating = true } = Astro.props;
     0% { transform: scale(1); opacity: 0.9; }
     70%, 100% { transform: scale(1.6); opacity: 0; }
   }
+
+  /* Tooltip toward the inline start (desktop hover only) */
+  .wa--floating::after {
+    content: attr(data-tip);
+    position: absolute;
+    inset-inline-end: calc(100% + 12px);
+    inset-block-start: 50%;
+    margin-block-start: -1rem;
+    block-size: 2rem;
+    display: grid;
+    place-items: center;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-sm);
+    color: var(--text);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
   @media (hover: hover) {
     .wa:hover { transform: translateY(-3px) scale(1.06); }
+    .wa--floating:hover::after { opacity: 1; transition-delay: 200ms; }
   }
   .wa:active { transform: scale(0.95); }
   .wa:focus-visible { outline-offset: 4px; border-radius: 50%; }
+  .wa--floating:focus-visible::after { opacity: 1; }
   @media (prefers-reduced-motion: reduce) {
     .wa__pulse { animation: none; opacity: 0; }
   }

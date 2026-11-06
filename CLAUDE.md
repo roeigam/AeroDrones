@@ -32,6 +32,14 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - **Images.** `picture { display: contents }` is set globally so `astro:assets` `<Picture>` images size against their real container.
 - **Physical gradient angles** (`90deg`) don't mirror on their own. Give RTL its own angle rather than flipping the element with `scaleX(-1)` when it has positioned children.
 
+- **OG images (Pango).** Pango picks paragraph direction from the first strong character, so Hebrew strings that start with Latin render scrambled. `scripts/gen-og.mjs` prefixes Hebrew with U+200F (RLM). Always open `og-he.jpg` after regenerating.
+- **Escapes.** Shell, sed and editor tools can mangle `\uXXXX` escapes. Prefer `String.fromCharCode(0x200f)` or `\p{Script=Hebrew}` with the `u` flag.
+- **Hidden overflow.** Sections use `overflow-x: clip`, which HIDES content that is too wide instead of scrolling. Grids need `minmax(0, 1fr)` columns, and the clip check (text and controls inside the viewport) must pass, not just the scrollWidth check.
+
+## Environment
+- `PUBLIC_WEB3FORMS_KEY`: the contact form key (see `.env.example`).
+- `SITE_URL`: the production origin for canonical and og URLs. On Netlify, the URL is used automatically as a fallback.
+
 ## Stack
 - Astro (latest), static output, TypeScript.
 - Plain CSS with custom properties.
@@ -84,7 +92,7 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - [x] **Phase 2:** i18n routing, language toggle, base layout, header, footer and the full hero.
 - [x] **Phase 3:** About and Services, with scroll reveals.
 - [x] **Phase 4:** builds collection, gallery and the `<dialog>` lightbox.
-- [ ] **Phase 5:** contact form (Web3Forms), WhatsApp buttons, meta and OG tags. After generating og-he.jpg, OPEN it and verify the Hebrew renders right-to-left. If it is reversed or broken, make the og image text English-only for both languages.
+- [x] **Phase 5:** contact form (Web3Forms), WhatsApp buttons, meta and OG tags. After generating og-he.jpg, OPEN it and verify the Hebrew renders right-to-left. If it is reversed or broken, make the og image text English-only for both languages.
 - [ ] **Phase 6:** polish pass, performance check and the list of remaining TODO placeholders.
 
 ## Testing checklist (every phase)
@@ -96,7 +104,8 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - Visible focus styles, alt text, and `aria-label` on icon-only buttons.
 
 ## Git
-- Commit at the end of every phase ("Phase N: ...").
+- Commit at the end of every phase ("Phase N: ..."), then push: `git push origin main`.
+- Remote: https://github.com/roeigam/AeroDrones.git (origin), branch `main`.
 
 ## Placeholder policy
 - `TODO.md` is the delivery checklist. Add anything the client MUST supply or approve.

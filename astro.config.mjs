@@ -3,8 +3,10 @@ import { defineConfig } from 'astro/config';
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
-  // TODO: set the real production URL once the domain is known (used for canonical / og:url).
-  site: 'https://aerodrones.example.com',
+  // Production origin for canonical, og:url and absolute og:image URLs (WhatsApp previews need these).
+  // Set SITE_URL in the host's environment. Netlify's URL is used automatically as a fallback.
+  // TODO: set SITE_URL to the real domain before delivery.
+  site: process.env.SITE_URL || process.env.URL || 'https://aerodrones.example.com',
   output: 'static',
   trailingSlash: 'ignore',
   i18n: {

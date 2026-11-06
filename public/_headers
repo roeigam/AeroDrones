@@ -1,0 +1,14 @@
+# Netlify + Cloudflare Pages both read this file.
+
+# Hashed build assets (JS, CSS, fonts, optimized images) never change → cache forever.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# OG images: cache for a day (link-preview crawlers re-fetch occasionally).
+/og/*
+  Cache-Control: public, max-age=86400
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

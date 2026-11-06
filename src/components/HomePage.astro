@@ -10,8 +10,9 @@ import Hero from './sections/Hero.astro';
 import About from './sections/About.astro';
 import Services from './sections/Services.astro';
 import Builds from './sections/Builds.astro';
-import SectionHeading from './ui/SectionHeading.astro';
-import { content, type SectionId } from '../content/site';
+import Contact from './sections/Contact.astro';
+import WhatsAppFab from './WhatsAppFab.astro';
+import { content, whatsappHref } from '../content/site';
 import type { Lang } from '../i18n/utils';
 
 interface Props {
@@ -19,8 +20,6 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = content[lang];
-// Section shells (anchor targets + headings) until Phase 5 fill them in.
-const stubs: SectionId[] = ['contact'];
 ---
 <BaseLayout lang={lang} title={t.meta.title} description={t.meta.description} localized skipLabel={t.a11y.skipToContent}>
   <Header lang={lang} />
@@ -29,15 +28,10 @@ const stubs: SectionId[] = ['contact'];
     <About lang={lang} />
     <Services lang={lang} />
     <Builds lang={lang} />
-    {stubs.map((id) => (
-      <section class:list={['section', 'section--band', 'stub']} id={id} data-section aria-labelledby={`${id}-title`}>
-        <div class="container">
-          <SectionHeading num={t.sections[id].num} label={t.sections[id].label} title={t.sections[id].title} id={`${id}-title`} />
-        </div>
-      </section>
-    ))}
+    <Contact lang={lang} />
   </main>
   <Footer lang={lang} />
+  <WhatsAppFab href={whatsappHref(lang)} label={t.contact.whatsapp.fabLabel} />
 </BaseLayout>
 
 <script>
@@ -45,7 +39,5 @@ const stubs: SectionId[] = ['contact'];
 </script>
 
 <style>
-  /* TODO (Phases 4–5): remove once the real sections replace the shells */
-  .stub { min-block-size: 70vh; }
   main:focus { outline: none; }
 </style>

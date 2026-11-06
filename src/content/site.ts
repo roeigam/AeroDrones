@@ -37,6 +37,10 @@ export const shared = {
   langNames: { he: 'עברית', en: 'English' } as Record<Lang, string>,
   /** Platform names are proper nouns, identical in both languages (used as aria-labels). */
   socialNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', facebook: 'Facebook' } as Record<SocialId, string>,
+  /** Sender name on contact-form emails (Web3Forms from_name). */
+  formFromName: 'AeroDrones website',
+  /** Platform name, identical in both languages. */
+  whatsappName: 'WhatsApp',
   // TODO: client's real WhatsApp number, international format, digits only (e.g. 9725XXXXXXXX)
   whatsappNumber: '972500000000',
   // TODO: client's real social profiles (remove any he doesn't use)
@@ -53,6 +57,8 @@ const he = {
     // TODO: final copy from the client
     title: 'AeroDrones — רחפני FPV בהתאמה אישית',
     description: 'רחפני FPV שנבנים בעבודת יד: בנייה לפי הזמנה, תיקונים, שדרוגים וכיוונון.',
+    ogImageAlt: 'AeroDrones — רחפני FPV שנבנים לעוף',
+    ogLocale: 'he_IL',
   },
   a11y: {
     skipToContent: 'דילוג לתוכן',
@@ -139,6 +145,57 @@ const he = {
     specsTitle: 'מפרט',
     slide: 'שקופית',
   },
+  contact: {
+    // TODO: final copy from the client
+    lede: 'בנייה חדשה, תיקון או שדרוג? ספרו לי מה אתם צריכים ואחזור אליכם בהקדם.',
+    whatsapp: {
+      title: 'הכי מהיר: וואטסאפ',
+      text: 'שלחו הודעה עם תמונה של הרחפן או תיאור קצר — ואענה ישירות.',
+      cta: 'שליחת הודעה בוואטסאפ',
+      greeting: 'היי! הגעתי מהאתר של AeroDrones ואשמח לשמוע פרטים על',
+      fabLabel: 'שליחת הודעה בוואטסאפ',
+    },
+    // TODO: real values from the client
+    facts: [
+      { label: 'זמן תגובה', value: 'עד יום עבודה' },
+      { label: 'אזור שירות', value: 'כל הארץ · משלוח או איסוף' },
+    ] as { label: string; value: string }[],
+    form: {
+      title: 'או השאירו פרטים',
+      name: 'שם מלא',
+      namePlaceholder: 'איך לפנות אליך?',
+      phone: 'טלפון',
+      phonePlaceholder: '050-000-0000',
+      email: 'אימייל',
+      emailPlaceholder: 'name@example.com',
+      emailOptional: '(לא חובה)',
+      message: 'הודעה',
+      messagePlaceholder: 'ספרו לי על הרחפן, על התקלה או על מה שאתם רוצים לבנות…',
+      requiredNote: 'שדות חובה',
+      submit: 'שליחת הודעה',
+      sending: 'שולח…',
+      privacy: 'הפרטים משמשים רק כדי לחזור אליכם.',
+      subject: 'פנייה חדשה מהאתר (עברית) — AeroDrones',
+      language: 'Hebrew',
+      errors: {
+        nameRequired: 'נא למלא שם',
+        phoneRequired: 'נא למלא מספר טלפון',
+        phoneInvalid: 'מספר הטלפון לא נראה תקין',
+        emailInvalid: 'כתובת האימייל לא נראית תקינה',
+        messageRequired: 'נא לכתוב הודעה',
+        messageShort: 'ההודעה קצרה מדי — עוד כמה מילים?',
+      },
+      success: {
+        title: 'ההודעה נשלחה!',
+        text: 'תודה שפניתם. אחזור אליכם בהקדם.',
+        again: 'שליחת הודעה נוספת',
+      },
+      error: {
+        title: 'משהו השתבש בשליחה.',
+        text: 'נסו שוב בעוד רגע, או שלחו לי הודעה בוואטסאפ.',
+      },
+    },
+  },
   footer: {
     // TODO: final copy from the client
     tagline: 'רחפני FPV שנבנים, מתוקנים ומכוונים בעבודת יד.',
@@ -152,6 +209,8 @@ const en: typeof he = {
     // TODO: final copy from the client
     title: 'AeroDrones — Custom FPV drones',
     description: 'Hand-built FPV drones: custom builds to order, repairs, upgrades and tuning.',
+    ogImageAlt: 'AeroDrones — FPV drones built to fly',
+    ogLocale: 'en_US',
   },
   a11y: {
     skipToContent: 'Skip to content',
@@ -238,6 +297,57 @@ const en: typeof he = {
     specsTitle: 'Specs',
     slide: 'Slide',
   },
+  contact: {
+    // TODO: final copy from the client
+    lede: "A new build, a repair or an upgrade? Tell me what you need and I'll get back to you soon.",
+    whatsapp: {
+      title: 'Fastest: WhatsApp',
+      text: "Send a message with a photo of your drone or a short description — I'll reply directly.",
+      cta: 'Message me on WhatsApp',
+      greeting: "Hi! I found AeroDrones' website and I'd like to hear more about",
+      fabLabel: 'Message on WhatsApp',
+    },
+    // TODO: real values from the client
+    facts: [
+      { label: 'Response time', value: 'Within one business day' },
+      { label: 'Service area', value: 'Nationwide · shipping or pickup' },
+    ],
+    form: {
+      title: 'Or leave your details',
+      name: 'Full name',
+      namePlaceholder: 'What should I call you?',
+      phone: 'Phone',
+      phonePlaceholder: '050-000-0000',
+      email: 'Email',
+      emailPlaceholder: 'name@example.com',
+      emailOptional: '(optional)',
+      message: 'Message',
+      messagePlaceholder: 'Tell me about your drone, the problem, or what you want to build…',
+      requiredNote: 'Required fields',
+      submit: 'Send message',
+      sending: 'Sending…',
+      privacy: 'Your details are only used to get back to you.',
+      subject: 'New message from the website (English) — AeroDrones',
+      language: 'English',
+      errors: {
+        nameRequired: 'Please enter your name',
+        phoneRequired: 'Please enter a phone number',
+        phoneInvalid: "That phone number doesn't look right",
+        emailInvalid: "That email address doesn't look right",
+        messageRequired: 'Please write a message',
+        messageShort: 'That message is a bit short — a few more words?',
+      },
+      success: {
+        title: 'Message sent!',
+        text: "Thanks for reaching out. I'll get back to you soon.",
+        again: 'Send another message',
+      },
+      error: {
+        title: 'Something went wrong.',
+        text: 'Please try again in a moment, or message me on WhatsApp.',
+      },
+    },
+  },
   footer: {
     // TODO: final copy from the client
     tagline: 'FPV drones built, repaired and tuned by hand.',
@@ -247,3 +357,9 @@ const en: typeof he = {
 };
 
 export const content: Record<Lang, typeof he> = { he, en };
+
+/** wa.me link with the number and the greeting in the given language. */
+export function whatsappHref(lang: Lang): string {
+  const text = `${content[lang].contact.whatsapp.greeting} `;
+  return `https://wa.me/${shared.whatsappNumber}?text=${encodeURIComponent(text)}`;
+}

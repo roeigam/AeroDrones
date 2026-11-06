@@ -1,7 +1,8 @@
 ---
 /**
- * Form field: label follows page direction; phone/email VALUES are always dir="ltr".
- * Glowing focus ring, error state via aria-invalid + message, success tint via .is-valid.
+ * Form field: the label follows the page direction; phone/email VALUES are always dir="ltr".
+ * Glowing focus ring (opacity-only), error state via aria-invalid + a live error message that
+ * src/scripts/contact.ts fills in the current language.
  */
 interface Props {
   label: string;
@@ -10,11 +11,16 @@ interface Props {
   autocomplete?: string;
   required?: boolean;
   placeholder?: string;
+  /** small muted note after the label, e.g. "(optional)" */
+  note?: string;
   error?: string;
   requiredMark?: string;
   value?: string;
   forceInvalid?: boolean;
   inputmode?: 'text' | 'email' | 'tel';
+  pattern?: string;
+  minlength?: number;
+  maxlength?: number;
   rows?: number;
   id?: string;
 }
@@ -25,21 +31,26 @@ const {
   autocomplete,
   required = false,
   placeholder,
+  note,
   error,
   requiredMark = '*',
   value,
   forceInvalid = false,
   inputmode,
+  pattern,
+  minlength,
+  maxlength,
   rows = 5,
   id = `f-${name}`,
 } = Astro.props;
 const ltr = type === 'email' || type === 'tel';
 const errId = `${id}-error`;
 ---
-<div class="field">
+<div class="field" data-field>
   <label class="field__label" for={id}>
     {label}
     {required && <span class="field__req" aria-hidden="true">{requiredMark}</span>}
+    {note && <span class="field__note">{note}</span>}
   </label>
   <div class="field__control">
     {type === 'textarea' ? (
@@ -49,6 +60,8 @@ const errId = `${id}-error`;
         rows={rows}
         required={required}
         placeholder={placeholder}
+        minlength={minlength}
+        maxlength={maxlength}
         aria-describedby={errId}
         aria-invalid={forceInvalid ? 'true' : undefined}
         class="field__input field__input--area"
@@ -62,6 +75,9 @@ const errId = `${id}-error`;
         inputmode={inputmode}
         required={required}
         placeholder={placeholder}
+        pattern={pattern}
+        minlength={minlength}
+        maxlength={maxlength}
         value={value}
         dir={ltr ? 'ltr' : undefined}
         aria-describedby={errId}
@@ -71,17 +87,28 @@ const errId = `${id}-error`;
     )}
     <span class="field__ring" aria-hidden="true"></span>
   </div>
-  <p class="field__error" id={errId} aria-live="polite">{forceInvalid ? error : ''}</p>
+  <p class="field__error" id={errId} data-field-error>
+    {forceInvalid && error && (
+      <>
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M8 4.5v4.2M8 11.2h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+        {error}
+      </>
+    )}
+  </p>
 </div>
 
 <style>
   .field { display: grid; gap: var(--space-2); }
   .field__label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35em;
     font-size: var(--fs-small);
     font-weight: 500;
     color: var(--text-muted);
   }
-  .field__req { color: var(--accent); margin-inline-start: 0.25em; }
+  .field__req { color: var(--accent); }
+  .field__note { color: var(--text-faint); font-weight: 400; font-size: 0.8125rem; }
   .field__control { position: relative; }
   .field__input {
     inline-size: 100%;
@@ -96,14 +123,19 @@ const errId = `${id}-error`;
     transition: border-color var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
     appearance: none;
   }
-  /* LTR values (phone/email) align to the inline start of the page direction */
+  /* LTR values (phone/email) line up with the label side in both directions */
   .field__input--ltr { text-align: start; }
   :global([dir='rtl']) .field__input--ltr { text-align: end; }
-  :global([dir='rtl']) .field__input--ltr:placeholder-shown { text-align: end; }
-  .field__input--area { resize: vertical; min-block-size: 8rem; }
+  .field__input--area { resize: vertical; min-block-size: 9rem; }
   .field__input::placeholder { color: var(--text-faint); opacity: 1; }
   .field__input:hover { border-color: color-mix(in oklab, var(--accent) 30%, var(--line-strong)); }
   .field__input:focus { outline: none; border-color: var(--accent); background: color-mix(in oklab, var(--surface-1) 85%, transparent); }
+  /* autofill: keep the dark look */
+  .field__input:-webkit-autofill {
+    -webkit-text-fill-color: var(--text);
+    box-shadow: inset 0 0 0 100px var(--surface-1);
+    caret-color: var(--text);
+  }
 
   /* Glow ring: opacity-only transition */
   .field__ring {
@@ -115,7 +147,6 @@ const errId = `${id}-error`;
     pointer-events: none;
     transition: opacity var(--dur-base) var(--ease-out);
   }
-  .field__input:focus-visible + .field__ring,
   .field__input:focus + .field__ring { opacity: 1; }
 
   .field__input[aria-invalid='true'] { border-color: var(--danger); }
@@ -124,9 +155,13 @@ const errId = `${id}-error`;
     opacity: 1;
   }
   .field__error {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
     min-block-size: 1.25em;
     font-size: 0.8125rem;
     color: var(--danger);
     line-height: 1.25;
   }
+  .field__error :global(svg) { flex-shrink: 0; }
 </style>

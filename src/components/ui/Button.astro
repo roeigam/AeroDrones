@@ -8,7 +8,7 @@ import Icon, { type IconName } from './Icon.astro';
 
 interface Props {
   href?: string;
-  variant?: 'primary' | 'ghost';
+  variant?: 'primary' | 'ghost' | 'whatsapp';
   size?: 'md' | 'lg';
   icon?: IconName;
   iconStart?: IconName;
@@ -135,6 +135,23 @@ const attrs = href ? { href, ...rest } : { type, disabled, ...rest };
     transition: opacity var(--dur-base) var(--ease-out);
   }
 
+  /* ---- WhatsApp (brand green, white text with AA contrast) ---- */
+  .btn--whatsapp {
+    color: #fff;
+    background: linear-gradient(135deg, #13914a, #0c7438);
+    box-shadow: var(--inset-hairline);
+  }
+  .btn--whatsapp .btn__glow {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: 0 0 18px rgb(37 211 102 / 0.35), 0 0 42px rgb(37 211 102 / 0.18);
+    opacity: 0.5;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  @media (hover: hover) { .btn--whatsapp:hover .btn__glow { opacity: 1; } }
+
   /* ---- Icon nudge ---- */
   .btn :global(.btn__icon) { transition: transform var(--dur-base) var(--ease-spring); }
 
@@ -151,12 +168,12 @@ const attrs = href ? { href, ...rest } : { type, disabled, ...rest };
   .btn:active { transform: translateY(0) scale(0.97); transition-duration: var(--dur-fast); }
   .btn:focus-visible { outline-offset: 4px; border-radius: var(--radius-pill); }
 
-  .btn:disabled, .btn[aria-disabled='true'] {
+  .btn:disabled:not([data-loading]), .btn[aria-disabled='true'] {
     opacity: 0.45;
     cursor: not-allowed;
     transform: none;
   }
-  .btn:disabled .btn__glow { opacity: 0; }
+  .btn:disabled:not([data-loading]) .btn__glow { opacity: 0; }
 
   /* ---- Loading (set data-loading on the button) ---- */
   .btn__spinner {
