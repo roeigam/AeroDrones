@@ -1,0 +1,66 @@
+---
+/**
+ * Telemetry-style section heading: "01 / ABOUT ────" eyebrow, big title, optional lede.
+ * The number is always mono; the label follows the current language.
+ */
+interface Props {
+  num: string;
+  label: string;
+  title: string;
+  lede?: string;
+  id?: string;
+  align?: 'start' | 'center';
+}
+const { num, label, title, lede, id, align = 'start' } = Astro.props;
+---
+<header class:list={['sh', `sh--${align}`]}>
+  <p class="sh__eyebrow" data-reveal>
+    <span class="sh__num" dir="ltr">{num} /</span>
+    <span class="sh__label t-mono">{label}</span>
+    <span class="sh__line" aria-hidden="true"></span>
+  </p>
+  <h2 class="sh__title t-h2" id={id} data-reveal style="--i: 1">{title}</h2>
+  {lede && <p class="sh__lede t-lead" data-reveal style="--i: 2">{lede}</p>}
+</header>
+
+<style>
+  .sh { display: grid; gap: var(--space-4); margin-block-end: var(--space-8); max-inline-size: 46rem; }
+  .sh--center { margin-inline: auto; text-align: center; justify-items: center; }
+  .sh__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    inline-size: 100%;
+    color: var(--accent);
+  }
+  .sh__num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-lg);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-shadow: 0 0 12px var(--accent-35);
+  }
+  .sh__label { color: var(--text-muted); font-size: var(--fs-mono-lg); }
+  .sh__line {
+    flex: 1;
+    max-inline-size: 10rem;
+    block-size: 1px;
+    background: var(--grad-line);
+    position: relative;
+  }
+  :global([dir='rtl']) .sh__line { background: linear-gradient(270deg, var(--accent-60), transparent); }
+  .sh__line::after {
+    content: '';
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: -2px;
+    inline-size: 5px;
+    block-size: 5px;
+    border-radius: 50%;
+    background: var(--accent-35);
+  }
+  .sh--center .sh__line { display: none; }
+  .sh__title { max-inline-size: 22ch; }
+  .sh__lede { max-inline-size: 40rem; }
+</style>

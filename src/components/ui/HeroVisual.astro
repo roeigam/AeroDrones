@@ -1,0 +1,178 @@
+---
+/**
+ * Hero showpiece visual: layered glow, rotating HUD rings, crosshair, telemetry readouts,
+ * and the drone photo hovering (float + counter-phase ground shadow).
+ * mode 'cutout' → photo blends into the glow via radial mask + lighten blend (best for dark-background shots / transparent PNGs).
+ * mode 'framed' → photo sits inside a HUD viewfinder frame.
+ * Photos never mirror.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import HudRings from './HudRings.astro';
+import HudFrame from './HudFrame.astro';
+
+interface Readout { k: string; v: string; u?: string }
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  mode?: 'cutout' | 'framed';
+  readouts?: Readout[];
+  frameLabels?: { start?: string; end?: string; bottomStart?: string; bottomEnd?: string };
+  priority?: boolean;
+  class?: string;
+}
+const {
+  image,
+  alt,
+  mode = 'cutout',
+  readouts = [],
+  frameLabels = {},
+  priority = false,
+  class: className,
+} = Astro.props;
+
+const pictureProps = {
+  src: image,
+  alt,
+  formats: ['avif', 'webp'] as ('avif' | 'webp')[],
+  widths: [480, 720, 960, 1280],
+  sizes: '(max-width: 900px) 88vw, 46vw',
+  loading: priority ? ('eager' as const) : ('lazy' as const),
+  fetchpriority: priority ? ('high' as const) : ('auto' as const),
+  decoding: priority ? ('sync' as const) : ('async' as const),
+};
+---
+<div class:list={['hv', `hv--${mode}`, className]}>
+  <div class="hv__glow" aria-hidden="true"></div>
+  <HudRings />
+  <div class="hv__stage">
+    <div class="hv__float">
+      {mode === 'cutout' ? (
+        <Picture {...pictureProps} class="hv__img" />
+      ) : (
+        <HudFrame labels={frameLabels} rec ratio="1">
+          <Picture {...pictureProps} class="hv__img" />
+        </HudFrame>
+      )}
+    </div>
+    <div class="hv__shadow" aria-hidden="true"></div>
+  </div>
+
+  {readouts.length > 0 && (
+    <ul class="hv__readouts" role="list" aria-hidden="true">
+      {readouts.slice(0, 4).map((r, i) => (
+        <li class={`ro ro--${i}`} dir="ltr">
+          <span class="ro__k">{r.k}</span>
+          <span class="ro__v">{r.v}</span>
+          {r.u && <span class="ro__u">{r.u}</span>}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+
+<style>
+  .hv {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+  }
+
+  /* Layered glow: cyan core + violet outer haze (gradients only, no blur filter) */
+  .hv__glow {
+    position: absolute;
+    inset: -12%;
+    z-index: -1;
+    border-radius: 50%;
+    background:
+      radial-gradient(closest-side, color-mix(in oklab, var(--accent) 34%, transparent), color-mix(in oklab, var(--accent) 10%, transparent) 45%, transparent 72%),
+      radial-gradient(closest-side at 62% 58%, var(--secondary-35), transparent 85%);
+    animation: hv-breathe 7s var(--ease-in-out) infinite;
+  }
+  @keyframes hv-breathe {
+    0%, 100% { opacity: 0.85; transform: scale(0.97); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+
+  .hv :global(.rings) { inset: 2%; }
+
+  .hv__stage {
+    position: relative;
+    inline-size: 82%;
+    display: grid;
+    justify-items: center;
+  }
+  .hv__float {
+    inline-size: 100%;
+    animation: hv-float var(--dur-float) var(--ease-in-out) infinite;
+    will-change: transform;
+  }
+  @keyframes hv-float {
+    0%, 100% { transform: translate3d(0, 6px, 0) rotate(0.4deg); }
+    50% { transform: translate3d(0, -12px, 0) rotate(-1.2deg); }
+  }
+
+  .hv__shadow {
+    inline-size: 55%;
+    block-size: 18px;
+    margin-block-start: -4%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(0 0 0 / 0.75), transparent);
+    animation: hv-shadow var(--dur-float) var(--ease-in-out) infinite;
+  }
+  @keyframes hv-shadow {
+    0%, 100% { transform: scaleX(1); opacity: 0.9; }
+    50% { transform: scaleX(0.78); opacity: 0.5; }
+  }
+
+  /* ---- cutout mode ---- */
+  .hv--cutout .hv__float :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    -webkit-mask-image: radial-gradient(closest-side, #000 48%, rgb(0 0 0 / 0.55) 68%, transparent 92%);
+    mask-image: radial-gradient(closest-side, #000 48%, rgb(0 0 0 / 0.55) 68%, transparent 92%);
+    mix-blend-mode: lighten;
+  }
+  .hv--cutout .hv__shadow { display: none; }
+
+  /* ---- framed mode ---- */
+  .hv--framed .hv__stage { inline-size: 72%; }
+
+  /* ---- telemetry readouts ---- */
+  .hv__readouts { position: absolute; inset: 0; margin: 0; pointer-events: none; }
+  .ro {
+    position: absolute;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+    padding: 0.35em 0.6em;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-inline-start: 1px solid var(--accent-60);
+    background: linear-gradient(90deg, var(--accent-5), transparent);
+  }
+  .ro__k { color: var(--accent); font-weight: 500; }
+  .ro__v { color: var(--text); font-size: 0.8125rem; letter-spacing: 0.04em; }
+  .ro__u { opacity: 0.8; }
+  /* Readouts are placed physically (decorative, language-independent, dir=ltr) */
+  .ro--0 { inset-block-start: 8%; inset-inline-start: 0; }
+  .ro--1 { inset-block-start: 14%; inset-inline-end: 0; }
+  .ro--2 { inset-block-end: 14%; inset-inline-start: 2%; }
+  .ro--3 { inset-block-end: 6%; inset-inline-end: 4%; }
+
+  @media (max-width: 640px) {
+    .ro { font-size: 0.5625rem; }
+    .ro__v { font-size: 0.6875rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hv__glow, .hv__float, .hv__shadow { animation: none; }
+  }
+</style>

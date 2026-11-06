@@ -1,0 +1,66 @@
+---
+/**
+ * Telemetry-style spec readout. Latin/number runs use the mono font;
+ * on Hebrew pages they are wrapped in <bdi> so mixed strings don't scramble.
+ */
+import { splitBidi, type Lang } from '../../i18n/utils';
+
+interface Props {
+  text: string;
+  lang: Lang;
+  size?: 'sm' | 'md';
+}
+const { text, lang, size = 'md' } = Astro.props;
+const segments = splitBidi(text);
+---
+<span class:list={['chip', `chip--${size}`]}>
+  <span class="chip__dot" aria-hidden="true"></span>
+  <span class="chip__text">
+    {segments.map((s) =>
+      s.latin
+        ? lang === 'he'
+          ? <bdi class="chip__latin">{s.text}</bdi>
+          : <span class="chip__latin">{s.text}</span>
+        : <span class="chip__native">{s.text}</span>
+    )}
+  </span>
+</span>
+
+<style>
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding-block: 0.4em;
+    padding-inline: 0.65em 0.8em;
+    border-radius: var(--radius-sm);
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--surface-1) 90%, transparent), color-mix(in oklab, var(--bg-0) 85%, transparent));
+    border: 1px solid var(--line-strong);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 4%, transparent), inset 0 -8px 16px -12px var(--accent-20);
+    color: var(--text);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .chip--sm { font-size: 0.6875rem; }
+  .chip--md { font-size: var(--fs-mono-lg); }
+
+  .chip__dot {
+    inline-size: 0.42em;
+    block-size: 0.42em;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent), 0 0 12px var(--accent-35);
+    flex-shrink: 0;
+  }
+  .chip__latin {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .chip__native {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+</style>

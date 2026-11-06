@@ -1,0 +1,78 @@
+---
+/**
+ * Glassmorphism card: translucent blurred surface, 1px gradient border,
+ * and on hover a lift, a glow, and a brighter border (opacity/transform only).
+ */
+interface Props {
+  as?: 'article' | 'div' | 'li' | 'section';
+  interactive?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+const { as: Tag = 'div', interactive = true, class: className, ...rest } = Astro.props;
+---
+<Tag class:list={['glass', interactive && 'glass--interactive', className]} {...rest}>
+  <span class="glass__glow" aria-hidden="true"></span>
+  <span class="glass__border" aria-hidden="true"></span>
+  <span class="glass__border glass__border--hover" aria-hidden="true"></span>
+  <slot />
+</Tag>
+
+<style>
+  .glass {
+    position: relative;
+    isolation: isolate;
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(120% 80% at 0% 0%, var(--accent-5), transparent 55%),
+      var(--glass-bg);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    box-shadow: var(--shadow-md), var(--inset-hairline);
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+  :global([dir='rtl']) .glass {
+    background:
+      radial-gradient(120% 80% at 100% 0%, var(--accent-5), transparent 55%),
+      var(--glass-bg);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass { background: var(--glass-fallback); }
+  }
+
+  .glass__border {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--grad-border);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    pointer-events: none;
+  }
+  :global([dir='rtl']) .glass__border { transform: scaleX(-1); }
+  .glass__border--hover {
+    background: var(--grad-border-hover);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  .glass__glow {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: inherit;
+    box-shadow: var(--glow-lg);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease-out);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    .glass--interactive:hover { transform: translateY(-4px); }
+    .glass--interactive:hover .glass__border--hover { opacity: 1; }
+    .glass--interactive:hover .glass__glow { opacity: 0.45; }
+  }
+  .glass--interactive:focus-within .glass__border--hover { opacity: 1; }
+</style>

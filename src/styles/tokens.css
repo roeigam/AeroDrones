@@ -1,0 +1,144 @@
+/* =============================================================================
+   AeroDrones — DESIGN TOKENS
+   The ONE place for colors, gradients, shadows, glows, spacing, radii, fonts
+   and animation timings. Components consume these variables only.
+   To re-theme the whole site, change --accent (and optionally --secondary).
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Core palette ------------------------------------------------------ */
+  --accent: #2de2ff;            /* electric cyan — THE single swap point */
+  --secondary: #7b6cff;         /* soft violet — gradient partner only    */
+  --on-accent: #021018;         /* text on accent fills                   */
+
+  --bg-0: #04070d;              /* page base, near-black navy */
+  --bg-1: #070c17;              /* alternating section band   */
+  --surface-1: #0b1322;
+  --surface-2: #101a2e;
+  --surface-3: #16233d;
+
+  --text: #eaf1fa;
+  --text-muted: #93a3bc;
+  --text-faint: #5d6e89;        /* decorative telemetry labels only */
+
+  --success: #3ee6a8;
+  --danger: #ff6b7a;
+
+  /* ---- Derived accent tints (follow --accent automatically) -------------- */
+  --accent-5:  color-mix(in oklab, var(--accent) 5%, transparent);
+  --accent-10: color-mix(in oklab, var(--accent) 10%, transparent);
+  --accent-20: color-mix(in oklab, var(--accent) 20%, transparent);
+  --accent-35: color-mix(in oklab, var(--accent) 35%, transparent);
+  --accent-60: color-mix(in oklab, var(--accent) 60%, transparent);
+  --secondary-20: color-mix(in oklab, var(--secondary) 20%, transparent);
+  --secondary-35: color-mix(in oklab, var(--secondary) 35%, transparent);
+  --accent-soft: color-mix(in oklab, var(--accent) 70%, var(--text));
+
+  /* ---- Lines & borders ---------------------------------------------------- */
+  --line: color-mix(in oklab, #94beff 10%, transparent);
+  --line-strong: color-mix(in oklab, #94beff 18%, transparent);
+  --grid-minor: color-mix(in oklab, var(--accent) 4%, transparent);
+  --grid-major: color-mix(in oklab, var(--accent) 8%, transparent);
+
+  /* ---- Glass ------------------------------------------------------------- */
+  --glass-bg: color-mix(in oklab, var(--surface-2) 55%, transparent);
+  --glass-bg-strong: color-mix(in oklab, var(--surface-1) 82%, transparent);
+  --glass-fallback: color-mix(in oklab, var(--surface-2) 94%, transparent);
+  --glass-blur: blur(14px) saturate(140%);
+  --glass-blur-sm: blur(8px) saturate(130%);
+
+  /* ---- Gradients --------------------------------------------------------- */
+  --grad-accent: linear-gradient(120deg, var(--accent) 0%, var(--secondary) 100%);
+  --grad-text: linear-gradient(100deg, var(--text) 0%, var(--accent-soft) 45%, var(--accent) 70%, var(--secondary) 110%);
+  --grad-border: linear-gradient(140deg, var(--accent-60) 0%, transparent 38%, transparent 62%, var(--secondary-35) 100%);
+  --grad-border-hover: linear-gradient(140deg, var(--accent) 0%, var(--accent-20) 45%, var(--secondary-35) 70%, var(--secondary) 100%);
+  --grad-line: linear-gradient(90deg, var(--accent-60), transparent);
+  --grad-surface: linear-gradient(180deg, color-mix(in oklab, var(--surface-2) 70%, transparent), color-mix(in oklab, var(--surface-1) 60%, transparent));
+  --glow-pool-accent: radial-gradient(closest-side, var(--accent-20), transparent);
+  --glow-pool-secondary: radial-gradient(closest-side, var(--secondary-20), transparent);
+
+  /* ---- Shadows & glows --------------------------------------------------- */
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 0.35);
+  --shadow-md: 0 12px 32px -8px rgb(0 0 0 / 0.55);
+  --shadow-lg: 0 30px 80px -20px rgb(0 0 0 / 0.7);
+  --glow-sm: 0 0 12px var(--accent-35);
+  --glow-md: 0 0 18px var(--accent-35), 0 0 42px var(--accent-20);
+  --glow-lg: 0 0 30px var(--accent-35), 0 0 80px var(--accent-20), 0 0 140px var(--secondary-20);
+  --inset-hairline: inset 0 1px 0 color-mix(in oklab, white 6%, transparent);
+
+  /* ---- Typography -------------------------------------------------------- */
+  --font-heading: "Rubik", "Heebo", system-ui, sans-serif;
+  --font-body: "Heebo", "Rubik", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Heebo", ui-monospace, monospace;
+
+  --fs-display: clamp(2.75rem, 1.6rem + 6vw, 6.5rem);
+  --fs-h1: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+  --fs-h2: clamp(2rem, 1.4rem + 3vw, 3.5rem);
+  --fs-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --fs-lead: clamp(1.125rem, 1.02rem + 0.5vw, 1.375rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-mono: 0.75rem;
+  --fs-mono-lg: 0.8125rem;
+
+  --lh-tight: 0.98;
+  --lh-heading: 1.1;
+  --lh-body: 1.7;
+  --tracking-mono: 0.14em;
+  --tracking-tight: -0.025em;
+
+  /* ---- Spacing (4px base) ------------------------------------------------ */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --section-pad: clamp(5rem, 10vw, 9rem);
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --container: 76rem;
+  --container-narrow: 48rem;
+  --header-h: 4.25rem;
+
+  /* ---- Radii ------------------------------------------------------------- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* ---- Motion ------------------------------------------------------------ */
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-slow: 600ms;
+  --dur-reveal: 800ms;
+  --dur-float: 6s;
+  --dur-grid-drift: 60s;
+  --dur-ring: 80s;
+  --stagger: 70ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --reveal-distance: 24px;
+
+  /* ---- Layers ------------------------------------------------------------ */
+  --z-bg: -1;
+  --z-raised: 1;
+  --z-header: 50;
+  --z-fab: 60;
+  --z-overlay: 80;
+}
+
+/* Mobile: lighter effects to stay smooth on mid-range phones */
+@media (max-width: 640px) {
+  :root {
+    --glass-blur: blur(10px) saturate(130%);
+    --grid-minor: color-mix(in oklab, var(--accent) 2.5%, transparent);
+    --grid-major: color-mix(in oklab, var(--accent) 6%, transparent);
+  }
+}

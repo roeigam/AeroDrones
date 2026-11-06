@@ -1,0 +1,62 @@
+---
+/** Floating WhatsApp button with a gentle pulse ring. Pinned to the inline-end corner. */
+import Icon from './ui/Icon.astro';
+
+interface Props {
+  href: string;
+  label: string;
+  floating?: boolean;
+}
+const { href, label, floating = true } = Astro.props;
+---
+<a
+  class:list={['wa', floating && 'wa--floating']}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={label}
+>
+  <span class="wa__pulse" aria-hidden="true"></span>
+  <Icon name="whatsapp" size={28} />
+</a>
+
+<style>
+  .wa {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: 3.5rem;
+    block-size: 3.5rem;
+    border-radius: 50%;
+    color: #fff;
+    background: radial-gradient(circle at 30% 25%, #3ce07a, #1faa55 70%);
+    box-shadow: 0 10px 30px -6px rgb(31 170 85 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.25);
+    transition: transform var(--dur-base) var(--ease-spring);
+  }
+  .wa--floating {
+    position: fixed;
+    inset-block-end: max(1.25rem, env(safe-area-inset-bottom));
+    inset-inline-end: 1.25rem;
+    z-index: var(--z-fab);
+  }
+  .wa__pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgb(60 224 122 / 0.6);
+    animation: wa-pulse 2.6s var(--ease-out) infinite;
+    pointer-events: none;
+  }
+  @keyframes wa-pulse {
+    0% { transform: scale(1); opacity: 0.9; }
+    70%, 100% { transform: scale(1.6); opacity: 0; }
+  }
+  @media (hover: hover) {
+    .wa:hover { transform: translateY(-3px) scale(1.06); }
+  }
+  .wa:active { transform: scale(0.95); }
+  .wa:focus-visible { outline-offset: 4px; border-radius: 50%; }
+  @media (prefers-reduced-motion: reduce) {
+    .wa__pulse { animation: none; opacity: 0; }
+  }
+</style>

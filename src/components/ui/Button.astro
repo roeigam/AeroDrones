@@ -1,0 +1,181 @@
+---
+/**
+ * Button / link-button. Renders <a> when href is given, otherwise <button>.
+ * Variants: primary (glowing accent fill), ghost (gradient outline).
+ * Effects animate transform + opacity only (glow and sheen live on pseudo-elements).
+ */
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'lg';
+  icon?: IconName;
+  iconStart?: IconName;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  disabled?: boolean;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  iconStart,
+  type = 'button',
+  class: className,
+  disabled,
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const attrs = href ? { href, ...rest } : { type, disabled, ...rest };
+---
+<Tag class:list={['btn', `btn--${variant}`, `btn--${size}`, className]} {...attrs}>
+  <span class="btn__glow" aria-hidden="true"></span>
+  <span class="btn__sheen" aria-hidden="true"></span>
+  <span class="btn__spinner" aria-hidden="true"></span>
+  <span class="btn__content">
+    {iconStart && <Icon name={iconStart} size={20} />}
+    <span class="btn__label"><slot /></span>
+    {icon && <Icon name={icon} size={20} class="btn__icon" />}
+  </span>
+</Tag>
+
+<style>
+  .btn {
+    --btn-pad-block: 0.85rem;
+    --btn-pad-inline: 1.5rem;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: 3rem;
+    padding: var(--btn-pad-block) var(--btn-pad-inline);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform var(--dur-base) var(--ease-out);
+    user-select: none;
+  }
+  .btn--lg { --btn-pad-block: 1.05rem; --btn-pad-inline: 1.9rem; font-size: 1.0625rem; min-block-size: 3.5rem; }
+
+  .btn__content {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  /* ---- Primary ---- */
+  .btn--primary {
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: var(--inset-hairline);
+  }
+  .btn--primary .btn__glow {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: var(--glow-md);
+    opacity: 0.55;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .btn__sheen {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .btn--primary .btn__sheen::before {
+    content: '';
+    position: absolute;
+    inset-block: -20%;
+    inline-size: 45%;
+    inset-inline-start: 0;
+    background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.55), transparent);
+    transform: translateX(-160%) skewX(-18deg);
+    transition: transform 700ms var(--ease-out);
+  }
+  :global([dir='rtl']) .btn--primary .btn__sheen::before { transform: translateX(160%) skewX(18deg); }
+
+  /* ---- Ghost ---- */
+  .btn--ghost {
+    color: var(--text);
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--glass-bg-strong), var(--glass-bg-strong)) padding-box,
+      var(--grad-border) border-box;
+  }
+  .btn--ghost .btn__glow {
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    background: var(--grad-border-hover) border-box;
+    -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) padding-box exclude, linear-gradient(#000 0 0);
+    box-shadow: var(--glow-sm);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+
+  /* ---- Icon nudge ---- */
+  .btn :global(.btn__icon) { transition: transform var(--dur-base) var(--ease-spring); }
+
+  /* ---- Interactions ---- */
+  @media (hover: hover) {
+    .btn:hover { transform: translateY(-2px); }
+    .btn--primary:hover .btn__glow { opacity: 1; }
+    .btn--primary:hover .btn__sheen::before { transform: translateX(320%) skewX(-18deg); }
+    :global([dir='rtl']) .btn--primary:hover .btn__sheen::before { transform: translateX(-320%) skewX(18deg); }
+    .btn--ghost:hover .btn__glow { opacity: 1; }
+    .btn:hover :global(.btn__icon.icon--dir) { transform: translateX(4px); }
+    :global([dir='rtl']) .btn:hover :global(.btn__icon.icon--dir) { transform: scaleX(-1) translateX(4px); }
+  }
+  .btn:active { transform: translateY(0) scale(0.97); transition-duration: var(--dur-fast); }
+  .btn:focus-visible { outline-offset: 4px; border-radius: var(--radius-pill); }
+
+  .btn:disabled, .btn[aria-disabled='true'] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn:disabled .btn__glow { opacity: 0; }
+
+  /* ---- Loading (set data-loading on the button) ---- */
+  .btn__spinner {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    z-index: 3;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin-block-start: -0.625rem;
+    margin-inline-start: -0.625rem;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    border-block-start-color: transparent;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .btn[data-loading] { cursor: progress; }
+  .btn[data-loading] .btn__content { opacity: 0; }
+  .btn[data-loading] .btn__spinner { opacity: 1; animation: btn-spin 0.8s linear infinite; }
+  @keyframes btn-spin { to { transform: rotate(360deg); } }
+</style>
