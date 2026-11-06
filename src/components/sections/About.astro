@@ -18,6 +18,8 @@ interface Props {
 const { lang } = Astro.props;
 const t = content[lang];
 const h = t.sections.about;
+// Stats are optional: an empty array in site.ts hides the whole row.
+const hasStats = t.about.stats.length > 0;
 ---
 <section class="section about" id="about" data-section aria-labelledby="about-title">
   <div class="container about__grid">
@@ -37,7 +39,7 @@ const h = t.sections.about;
       </HudFrame>
     </div>
 
-    <div class="about__copy">
+    <div class:list={['about__copy', !hasStats && 'about__copy--nostats']}>
       <SectionHeading num={h.num} label={h.label} title={h.title} id="about-title" />
       <div class="about__text">
         {t.about.paragraphs.map((p, i) => (
@@ -46,14 +48,16 @@ const h = t.sections.about;
           </p>
         ))}
       </div>
-      <dl class="stats" data-reveal style="--i: 4">
-        {t.about.stats.map((s) => (
-          <div class="stat">
-            <dt class="stat__label">{s.label}</dt>
-            <dd class="stat__value" dir="ltr">{s.value}</dd>
-          </div>
-        ))}
-      </dl>
+      {hasStats && (
+        <dl class="stats" data-reveal style="--i: 4">
+          {t.about.stats.map((s) => (
+            <div class="stat">
+              <dt class="stat__label">{s.label}</dt>
+              <dd class="stat__value" dir="ltr">{s.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
     </div>
   </div>
 </section>
@@ -87,6 +91,18 @@ const h = t.sections.about;
   .about__copy :global(.sh) { margin-block-end: var(--space-6); }
   .about__text { display: grid; gap: var(--space-4); max-inline-size: 38rem; color: var(--text-muted); }
   .about__first { color: var(--text); font-size: var(--fs-lead); line-height: 1.6; }
+
+  /* Without stats, a short glowing accent rule closes the text column */
+  .about__copy--nostats .about__text::after {
+    content: '';
+    display: block;
+    margin-block-start: var(--space-5);
+    inline-size: 4rem;
+    block-size: 2px;
+    border-radius: 2px;
+    background: var(--grad-accent);
+    box-shadow: 0 0 12px var(--accent-35);
+  }
 
   /* ---- Stats: telemetry readouts ---- */
   .stats {

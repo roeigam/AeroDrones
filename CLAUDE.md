@@ -98,6 +98,7 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - Commit at the end of every phase ("Phase N: ...").
 
 ## Placeholder policy
+- `TODO.md` is the delivery checklist. Add anything the client MUST supply or approve.
 - Every placeholder (text, image, number, coordinates) is marked with `// TODO` or `<!-- TODO -->`.
 - Stock photos (Unsplash or Pexels) are recorded in `CREDITS.md` with source URL, photographer and license.
 - The build gallery uses generated HUD-style placeholder images (`scripts/gen-build-placeholders.mjs`) until real photos arrive.

@@ -92,12 +92,13 @@ const he = {
       'התחלתי לטוס לפני יותר משמונה שנים עם רחפן מדף קטן, שהתרסק כבר בשבוע הראשון. במקום לקנות חדש, פירקתי אותו כדי להבין מה נשבר — ומשם זה כבר לא עצר.',
       'היום אני מתכנן ובונה רחפני FPV מאפס: בוחר כל חלק, מלחים, מכוונן את הבקר ובודק כל רחפן בשטח לפני שהוא יוצא מהסדנה. אותה תשומת לב נכנסת לכל תיקון ושדרוג — כי רחפן טוב צריך להרגיש כמו המשך של היד.',
     ],
-    // TODO: real numbers from the client
+    // TODO (MUST before delivery): these numbers are placeholders. Get the real values from the client,
+    // or set stats: [] to hide the row entirely (the layout is designed to work without it).
     stats: [
       { value: '8+', label: 'שנים באוויר' },
       { value: '150+', label: 'רחפנים נבנו ותוקנו' },
       { value: '100%', label: 'נבדקים בטיסה לפני מסירה' },
-    ],
+    ] as { value: string; label: string }[],
     imageAlt: 'רחפן FPV על שולחן העבודה, מוקף בציור אור', // TODO: update when the real photo arrives
   },
   services: {
@@ -178,7 +179,8 @@ const en: typeof he = {
       'I started flying more than eight years ago with a small off-the-shelf drone that crashed in its very first week. Instead of buying a new one, I took it apart to understand what broke — and I never stopped.',
       'Today I design and build FPV drones from scratch: choosing every part, soldering, tuning the flight controller and field-testing each quad before it leaves the workshop. The same care goes into every repair and upgrade — because a good drone should feel like an extension of your hand.',
     ],
-    // TODO: real numbers from the client
+    // TODO (MUST before delivery): these numbers are placeholders. Get the real values from the client,
+    // or set stats: [] to hide the row entirely (the layout is designed to work without it).
     stats: [
       { value: '8+', label: 'Years in the air' },
       { value: '150+', label: 'Drones built & repaired' },
