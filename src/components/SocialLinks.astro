@@ -1,0 +1,53 @@
+---
+/** Round social icon links with an accent ring + glow on hover (opacity/transform only). */
+import Icon from './ui/Icon.astro';
+import { shared } from '../content/site';
+
+interface Props {
+  label: string;
+  size?: 'md' | 'lg';
+}
+const { label, size = 'md' } = Astro.props;
+---
+<ul class:list={['social', `social--${size}`]} role="list" aria-label={label}>
+  {shared.social.map((s) => (
+    <li>
+      <a class="social__a" href={s.url} target="_blank" rel="noopener noreferrer" aria-label={shared.socialNames[s.id]}>
+        <Icon name={s.id} size={size === 'lg' ? 22 : 20} />
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .social { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+  .social__a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: 50%;
+    color: var(--text-muted);
+    border: 1px solid var(--line-strong);
+    background: color-mix(in oklab, var(--surface-1) 80%, transparent);
+    transition: transform var(--dur-base) var(--ease-spring), color var(--dur-base) var(--ease-out);
+  }
+  .social--lg .social__a { inline-size: 3.25rem; block-size: 3.25rem; }
+  .social__a::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    box-shadow: var(--glow-md), inset 0 0 12px var(--accent-20);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .social__a:hover { color: var(--accent); transform: translateY(-3px); }
+    .social__a:hover::after { opacity: 1; }
+  }
+  .social__a:focus-visible { color: var(--accent); border-radius: 50%; }
+  .social__a:focus-visible::after { opacity: 1; }
+</style>

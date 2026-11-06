@@ -132,6 +132,12 @@ ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
 }
 .skip-link:focus-visible { transform: none; }
 
+/* Direction helper for transform-origin (which has no logical keywords) */
+:root { --origin-inline-start: left; --origin-inline-end: right; }
+[dir="rtl"] { --origin-inline-start: right; --origin-inline-end: left; }
+
+html.no-scroll { overflow: hidden; }
+
 /* Directional icons mirror in RTL. Logos and photos never do. */
 [dir="rtl"] .icon--dir { transform: scaleX(-1); }
 

@@ -1,0 +1,239 @@
+---
+/**
+ * Fixed header: transparent over the hero, becomes a blurred glass bar once scrolled.
+ * Desktop: brand · anchor nav · flag language switch. Mobile: brand · flags · menu button → full-screen glass menu.
+ */
+import Brand from './ui/Brand.astro';
+import LangToggle from './LangToggle.astro';
+import SocialLinks from './SocialLinks.astro';
+import { content } from '../content/site';
+import type { Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+---
+<span class="hdr-sentinel" data-header-sentinel aria-hidden="true"></span>
+<header class="hdr" data-header>
+  <div class="hdr__bg" aria-hidden="true"></div>
+  <div class="hdr__in container">
+    <a class="hdr__brand" href="#top">
+      <Brand lang={lang} size="md" />
+      <span class="visually-hidden">— {t.a11y.homeLink}</span>
+    </a>
+
+    <nav class="hdr__nav" aria-label={t.a11y.mainNav}>
+      <ul role="list">
+        {t.nav.map((item) => (
+          <li><a class="hdr__link" href={`#${item.id}`} data-nav-link>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="hdr__tools">
+      <LangToggle lang={lang} groupLabel={t.a11y.langSwitch} />
+      <button
+        class="hdr__menu"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t.a11y.menuOpen}
+        data-menu-toggle
+        data-label-open={t.a11y.menuOpen}
+        data-label-close={t.a11y.menuClose}
+      >
+        <span class="burger" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mnav" id="mobile-menu" data-menu>
+    <nav class="mnav__nav container" aria-label={t.a11y.mainNav}>
+      <ul role="list">
+        {t.nav.map((item, i) => (
+          <li style={`--i: ${i}`}>
+            <a class="mnav__link" href={`#${item.id}`} data-nav-link>
+              <span class="mnav__num" dir="ltr">0{i + 1}</span>
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="mnav__foot" style={`--i: ${t.nav.length}`}>
+        <SocialLinks label={t.a11y.social} />
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  import '../scripts/nav';
+  import '../scripts/lang';
+</script>
+
+<style>
+  .hdr-sentinel {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 1px;
+    block-size: 24px;
+    pointer-events: none;
+  }
+  .hdr {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: var(--z-header);
+  }
+  /* Glass layer fades in with opacity (no background transitions) */
+  .hdr__bg {
+    position: absolute;
+    inset: 0;
+    background: var(--glass-bg-strong);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.8);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  .hdr__bg::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-35) 30%, var(--secondary-35) 70%, transparent);
+  }
+  .hdr.is-scrolled .hdr__bg,
+  .hdr.menu-open .hdr__bg { opacity: 1; }
+
+  .hdr__in {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    block-size: var(--header-h);
+  }
+  .hdr__brand { display: inline-flex; border-radius: var(--radius-sm); margin-inline-end: auto; }
+  .hdr__brand :global(.brand__mark) { transition: transform var(--dur-slow) var(--ease-spring); }
+  @media (hover: hover) {
+    .hdr__brand:hover :global(.brand__mark) { transform: rotate(45deg); }
+  }
+
+  /* ---- Desktop nav ---- */
+  .hdr__nav { display: none; }
+  .hdr__nav ul { display: flex; gap: var(--space-1); margin: 0; padding: 0; }
+  .hdr__link {
+    position: relative;
+    display: inline-block;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    border-radius: var(--radius-sm);
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .hdr__link::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0.8rem;
+    inset-block-end: 0.2rem;
+    block-size: 1.5px;
+    border-radius: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    transform: scaleX(0);
+    transform-origin: var(--origin-inline-start);
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .hdr__link:hover { color: var(--text); }
+    .hdr__link:hover::after { transform: scaleX(1); }
+  }
+  .hdr__link.is-active { color: var(--text); }
+  .hdr__link.is-active::after { transform: scaleX(1); }
+
+  .hdr__tools { display: flex; align-items: center; gap: var(--space-3); }
+
+  /* ---- Burger ---- */
+  .hdr__menu {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: color-mix(in oklab, var(--surface-1) 70%, transparent);
+    color: var(--text);
+  }
+  .burger { position: relative; display: block; inline-size: 18px; block-size: 12px; }
+  .burger span {
+    position: absolute;
+    inset-inline-start: 0;
+    inline-size: 100%;
+    block-size: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+  }
+  .burger span:nth-child(1) { inset-block-start: 0; }
+  .burger span:nth-child(2) { inset-block-start: 5.25px; inline-size: 65%; }
+  .burger span:nth-child(3) { inset-block-start: 10.5px; }
+  [aria-expanded='true'] .burger span:nth-child(1) { transform: translateY(5.25px) rotate(45deg); }
+  [aria-expanded='true'] .burger span:nth-child(2) { opacity: 0; }
+  [aria-expanded='true'] .burger span:nth-child(3) { transform: translateY(-5.25px) rotate(-45deg); }
+
+  /* ---- Mobile menu ---- */
+  .mnav {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    padding-block: calc(var(--header-h) + var(--space-7)) var(--space-7);
+    overflow-y: auto;
+    background:
+      radial-gradient(80% 50% at 50% 0%, var(--accent-10), transparent 70%),
+      radial-gradient(60% 40% at 100% 100%, var(--secondary-20), transparent 70%),
+      color-mix(in oklab, var(--bg-0) 97%, transparent);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
+  }
+  .mnav[data-open] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
+  }
+  .mnav__nav { display: grid; gap: var(--space-7); }
+  .mnav__nav ul { display: grid; gap: var(--space-2); margin: 0; padding: 0; }
+  .mnav__nav li, .mnav__foot {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+    transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+  }
+  .mnav[data-open] li, .mnav[data-open] .mnav__foot {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(80ms + var(--i) * 60ms);
+  }
+  .mnav__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+    border-block-end: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 1.2rem + 3vw, 2.5rem);
+    font-weight: 700;
+    color: var(--text);
+  }
+  .mnav__num { font-family: var(--font-mono); font-size: var(--fs-mono-lg); font-weight: 500; color: var(--accent); }
+  .mnav__link.is-active { color: var(--accent); }
+
+  @media (min-width: 960px) {
+    .hdr__nav { display: block; }
+    .hdr__menu, .mnav { display: none; }
+  }
+</style>

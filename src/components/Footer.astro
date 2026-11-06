@@ -1,0 +1,127 @@
+---
+/** Footer: brand mark + tagline, nav, social icons with hover glow, copyright with current year. */
+import Brand from './ui/Brand.astro';
+import Icon from './ui/Icon.astro';
+import SocialLinks from './SocialLinks.astro';
+import { content, shared } from '../content/site';
+import type { Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="ftr__glow" aria-hidden="true"></div>
+  <div class="container ftr__top">
+    <div class="ftr__brand">
+      <Brand lang={lang} size="lg" />
+      <p class="ftr__tag">{t.footer.tagline}</p>
+    </div>
+    <nav class="ftr__nav" aria-label={t.a11y.mainNav}>
+      <ul role="list">
+        {t.nav.map((item) => <li><a href={`#${item.id}`}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+    <SocialLinks label={t.a11y.social} size="lg" />
+  </div>
+  <div class="container ftr__bottom">
+    <p class="ftr__copy">
+      © <span data-year>{year}</span>{' '}
+      {lang === 'he' ? <bdi>{shared.brand}</bdi> : shared.brand}. {t.footer.rights}
+    </p>
+    <a class="ftr__top-link" href="#top">
+      <span>{t.footer.backToTop}</span>
+      <span class="ftr__arrow"><Icon name="arrow-down" size={16} /></span>
+    </a>
+  </div>
+</footer>
+
+<script>
+  // Keep the copyright year current even if the static build is old.
+  const y = String(new Date().getFullYear());
+  document.querySelectorAll('[data-year]').forEach((el) => {
+    if (el.textContent !== y) el.textContent = y;
+  });
+</script>
+
+<style>
+  .ftr {
+    position: relative;
+    padding-block: var(--space-9) var(--space-6);
+    margin-block-start: var(--space-8);
+    border-block-start: 1px solid var(--line);
+    overflow: clip;
+  }
+  .ftr::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -1px;
+    inset-inline: 10%;
+    block-size: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-60), var(--secondary-35), transparent);
+  }
+  .ftr__glow {
+    position: absolute;
+    inset-block-start: -60%;
+    inset-inline: 20%;
+    aspect-ratio: 2 / 1;
+    background: radial-gradient(closest-side, var(--accent-10), transparent);
+    pointer-events: none;
+  }
+  .ftr__top {
+    position: relative;
+    display: grid;
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .ftr__brand { display: grid; gap: var(--space-4); max-inline-size: 22rem; }
+  .ftr__tag { color: var(--text-muted); font-size: var(--fs-small); }
+  .ftr__nav ul { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: 0; padding: 0; }
+  .ftr__nav a { color: var(--text-muted); font-size: var(--fs-small); transition: color var(--dur-base) var(--ease-out); }
+  .ftr__nav a:hover { color: var(--accent); }
+
+  .ftr__bottom {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-5);
+    border-block-start: 1px solid var(--line);
+    color: var(--text-faint);
+    font-size: 0.8125rem;
+  }
+  .ftr__copy { color: var(--text-muted); }
+  .ftr__top-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .ftr__arrow {
+    display: grid;
+    place-items: center;
+    inline-size: 2rem;
+    block-size: 2rem;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    transform: rotate(180deg);
+    transition: transform var(--dur-base) var(--ease-spring), border-color var(--dur-base) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .ftr__top-link:hover { color: var(--accent); }
+    .ftr__top-link:hover .ftr__arrow { transform: rotate(180deg) translateY(3px); border-color: var(--accent); }
+  }
+
+  @media (min-width: 768px) {
+    .ftr__top { grid-template-columns: 1.4fr 1fr auto; }
+    .ftr__nav ul { flex-direction: column; }
+  }
+</style>

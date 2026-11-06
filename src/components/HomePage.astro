@@ -1,0 +1,45 @@
+---
+/**
+ * The one-page site, rendered for a given language. Both /index.astro (he) and /en/index.astro (en)
+ * render this, so there is no duplicated markup.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Hero from './sections/Hero.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+import { content, type SectionId } from '../content/site';
+import type { Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+// Phase 2: section shells (anchor targets + headings). Filled in Phases 3–5.
+const stubs: SectionId[] = ['about', 'services', 'builds', 'contact'];
+---
+<BaseLayout lang={lang} title={t.meta.title} description={t.meta.description} localized skipLabel={t.a11y.skipToContent}>
+  <Header lang={lang} />
+  <main id="main" tabindex="-1">
+    <Hero lang={lang} />
+    {stubs.map((id, i) => (
+      <section class:list={['section', i % 2 === 0 && 'section--band', 'stub']} id={id} data-section aria-labelledby={`${id}-title`}>
+        <div class="container">
+          <SectionHeading num={t.sections[id].num} label={t.sections[id].label} title={t.sections[id].title} id={`${id}-title`} />
+        </div>
+      </section>
+    ))}
+  </main>
+  <Footer lang={lang} />
+</BaseLayout>
+
+<script>
+  import '../scripts/reveal';
+</script>
+
+<style>
+  /* TODO (Phases 3–5): remove once the real sections replace the shells */
+  .stub { min-block-size: 70vh; }
+  main:focus { outline: none; }
+</style>

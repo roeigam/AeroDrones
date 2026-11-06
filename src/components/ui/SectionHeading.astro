@@ -15,7 +15,7 @@ const { num, label, title, lede, id, align = 'start' } = Astro.props;
 ---
 <header class:list={['sh', `sh--${align}`]}>
   <p class="sh__eyebrow" data-reveal>
-    <span class="sh__num" dir="ltr">{num} /</span>
+    <span class="sh__num">{num} /</span>
     <span class="sh__label t-mono">{label}</span>
     <span class="sh__line" aria-hidden="true"></span>
   </p>

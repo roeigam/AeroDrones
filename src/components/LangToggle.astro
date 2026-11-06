@@ -1,78 +1,178 @@
 ---
 /**
- * Pill language switch "עב / EN" with a sliding indicator.
- * A real link to the other locale; JS (Phase 2) appends the current section hash and stores the choice.
+ * Minimal flag language switch: two small round inline-SVG flags (no emoji).
+ * Active flag = full color + thin accent ring + soft glow (aria-current).
+ * Inactive flag = dimmed + desaturated, brightens on hover; it is a real link to the other
+ * locale, and src/scripts/lang.ts appends the current section hash and stores the choice.
+ * The stored choice NEVER redirects: it only adds a subtle highlight (.is-preferred).
+ * Flags are images: they never mirror.
  */
-import { langRoot, type Lang } from '../i18n/utils';
+import { shared } from '../content/site';
+import { langRoot, LANGS, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
-  label: string; // accessible label, e.g. "Switch to English"
+  groupLabel: string;
+  class?: string;
 }
-const { lang, label } = Astro.props;
-const other: Lang = lang === 'he' ? 'en' : 'he';
+const { lang, groupLabel, class: className } = Astro.props;
 ---
-<a
-  class="lt"
-  href={langRoot(other)}
-  hreflang={other}
-  lang={other}
-  aria-label={label}
-  data-lang-toggle
-  data-target-lang={other}
->
-  <span class="lt__track" dir="ltr" aria-hidden="true">
-    <span class:list={['lt__thumb', lang === 'en' && 'lt__thumb--end']}></span>
-    <span class:list={['lt__opt', lang === 'he' && 'is-active']} lang="he">עב</span>
-    <span class:list={['lt__opt', lang === 'en' && 'is-active']}>EN</span>
-  </span>
-</a>
+<div class:list={['flags', className]} role="group" aria-label={groupLabel} data-lang-toggle data-current-lang={lang}>
+  {LANGS.map((l) => {
+    const active = l === lang;
+    const name = shared.langNames[l];
+    return (
+      <a
+        class:list={['flag', active && 'is-active']}
+        href={langRoot(l)}
+        hreflang={l}
+        lang={l}
+        aria-label={name}
+        aria-current={active ? 'true' : undefined}
+        data-flag={l}
+        data-tip={name}
+      >
+        <span class="flag__disc">
+          {l === 'he' ? (
+            <svg viewBox="0 0 220 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+              <rect width="220" height="160" fill="#fff" />
+              <rect y="15" width="220" height="25" fill="#0038b8" />
+              <rect y="120" width="220" height="25" fill="#0038b8" />
+              <g fill="none" stroke="#0038b8" stroke-width="5.5" stroke-linejoin="miter">
+                <path d="M110 48 137.7 96H82.3Z" />
+                <path d="M110 112 82.3 64h55.4Z" />
+              </g>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 190 100" preserveAspectRatio="xMinYMid slice" aria-hidden="true" focusable="false">
+              <rect width="190" height="100" fill="#b22234" />
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <rect y={7.69 * (2 * i + 1)} width="190" height="7.69" fill="#fff" />
+              ))}
+              <rect width="76" height="53.85" fill="#3c3b6e" />
+              <g fill="#fff">
+                {[8, 20, 32, 44].map((y, row) =>
+                  [0, 1, 2, 3, 4].map((c) => <circle cx={9 + c * 14 + (row % 2) * 7} cy={y} r="2.6" />),
+                )}
+              </g>
+            </svg>
+          )}
+          <span class="flag__dim" aria-hidden="true"></span>
+        </span>
+      </a>
+    );
+  })}
+</div>
 
 <style>
-  .lt {
+  .flags {
     display: inline-flex;
-    border-radius: var(--radius-pill);
-    -webkit-tap-highlight-color: transparent;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .lt__track {
+  .flag {
+    --size: 26px;
     position: relative;
     display: inline-grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    padding: 3px;
-    border-radius: var(--radius-pill);
+    place-items: center;
+    inline-size: calc(var(--size) + 8px);
+    block-size: calc(var(--size) + 8px);
+    border-radius: 50%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .flag__disc {
+    position: relative;
+    display: block;
+    inline-size: var(--size);
+    block-size: var(--size);
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+    opacity: 0.55;
+    transform: scale(0.92);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-spring);
+  }
+  .flag__disc svg { inline-size: 100%; block-size: 100%; }
+  /* Desaturation layer: a gray "saturation" blend; animating its opacity = animating saturation. */
+  .flag__dim {
+    position: absolute;
+    inset: 0;
+    background: #808080;
+    mix-blend-mode: saturation;
+    opacity: 0.85;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  /* Glossy highlight so the flags read as small physical "badges" */
+  .flag__disc::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 25%, rgb(255 255 255 / 0.28), transparent 55%);
+    box-shadow: inset 0 -3px 6px rgb(0 0 0 / 0.25);
+    pointer-events: none;
+  }
+
+  /* Accent ring + glow (active only), opacity-driven */
+  .flag::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    box-shadow: 0 0 10px var(--accent-35), inset 0 0 6px var(--accent-20);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-spring);
+  }
+  .flag.is-active::before { opacity: 1; transform: none; }
+  .flag.is-active .flag__disc { opacity: 1; transform: none; }
+  .flag.is-active .flag__dim { opacity: 0; }
+
+  /* Inactive: brighten on hover / focus */
+  @media (hover: hover) {
+    .flag:not(.is-active):hover .flag__disc { opacity: 1; transform: scale(1); }
+    .flag:not(.is-active):hover .flag__dim { opacity: 0; }
+    .flag:not(.is-active):hover::before { opacity: 0.45; transform: none; }
+  }
+  .flag:not(.is-active):focus-visible .flag__disc { opacity: 1; }
+  .flag:not(.is-active):focus-visible .flag__dim { opacity: 0; }
+  .flag:focus-visible { outline-offset: 1px; border-radius: 50%; }
+  .flag.is-active { cursor: default; }
+
+  /* Remembered choice that differs from this page: subtle hint only, never a redirect */
+  .flag.is-preferred .flag__disc { opacity: 0.85; }
+  .flag.is-preferred .flag__dim { opacity: 0.35; }
+
+  /* Tooltip (centered under the flag; symmetric insets keep it centered in both directions) */
+  .flag::after {
+    content: attr(data-tip);
+    position: absolute;
+    inset-block-start: calc(100% + 6px);
+    inset-inline: -60px;
+    margin-inline: auto;
+    inline-size: max-content;
+    padding: 0.3rem 0.55rem;
+    border-radius: var(--radius-sm);
+    background: var(--surface-3);
     border: 1px solid var(--line-strong);
-    background: color-mix(in oklab, var(--surface-1) 75%, transparent);
-    font-family: var(--font-mono);
+    box-shadow: var(--shadow-sm);
+    color: var(--text);
+    font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 500;
-    letter-spacing: 0.06em;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+    z-index: 2;
   }
-  .lt__opt {
-    position: relative;
-    z-index: 1;
-    min-inline-size: 2.4rem;
-    padding: 0.35rem 0.6rem;
-    text-align: center;
-    color: var(--text-muted);
-    transition: color var(--dur-base) var(--ease-out);
-  }
-  .lt__opt[lang='he'] { font-family: var(--font-body); letter-spacing: 0; }
-  .lt__opt.is-active { color: var(--on-accent); }
-  .lt__thumb {
-    position: absolute;
-    inset-block: 3px;
-    inset-inline-start: 3px;
-    inline-size: calc(50% - 3px);
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    box-shadow: var(--glow-sm);
-    transition: transform var(--dur-slow) var(--ease-spring);
-  }
-  .lt__thumb--end { transform: translateX(100%); }
   @media (hover: hover) {
-    .lt:hover .lt__opt:not(.is-active) { color: var(--text); }
-    .lt:hover .lt__thumb:not(.lt__thumb--end) { transform: translateX(8%); }
-    .lt:hover .lt__thumb--end { transform: translateX(92%); }
+    .flag:hover::after { opacity: 1; transform: none; transition-delay: 250ms; }
   }
+  .flag:focus-visible::after { opacity: 1; transform: none; }
 </style>

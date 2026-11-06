@@ -66,9 +66,9 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - Astro built-in i18n: `defaultLocale: 'he'`, `locales: ['he','en']`, `prefixDefaultLocale: false`. Both pages are generated statically.
 - Hebrew pages use `lang="he" dir="rtl"`. English pages use `lang="en" dir="ltr"`.
 - Section ids are identical in both languages: `top`, `about`, `services`, `builds`, `contact`.
-- **The language toggle** is the pill `עב / EN`. It is a real link to the other locale, and JS appends the current section hash.
+- **The language toggle** is a minimal flag switch: two round inline-SVG flags (IL / US, never emoji), 26px. The active flag is full color with an accent ring and glow (aria-current). The inactive flag is dimmed and desaturated, brightens on hover, and is a real <a> to the other locale. Each flag has an aria-label and a CSS tooltip. JS appends the current section hash (/#builds → /en/#builds).
 - **Storing the choice.** The toggle saves the choice to localStorage, wrapped in try/catch.
-- **Redirects.** There is NEVER an auto-redirect on a first visit. Only a returning visitor who explicitly chose EN and lands on `/` from outside the site is sent to `/en/`.
+- **Redirects: NEVER**, including returning visitors. Hebrew at `/` always stays Hebrew. The stored choice only adds a subtle highlight (.is-preferred) to that flag.
 
 ## Contact
 - **Form submission.** The form posts with `fetch` to `https://api.web3forms.com/submit`.
@@ -80,10 +80,10 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 ## Phases (STOP after each one for review)
 - [x] **Phase 0:** this file, the folder structure and the visual design proposal.
 - [x] **Phase 1:** style tile at `/style` (built, awaiting review). It is temporary, noindex, and removed in Phase 6.
-- [ ] **Phase 2:** i18n routing, language toggle, base layout, header, footer and the full hero.
+- [x] **Phase 2:** i18n routing, language toggle, base layout, header, footer and the full hero.
 - [ ] **Phase 3:** About and Services, with scroll reveals.
 - [ ] **Phase 4:** builds collection, gallery and the `<dialog>` lightbox.
-- [ ] **Phase 5:** contact form (Web3Forms), WhatsApp buttons, meta and OG tags.
+- [ ] **Phase 5:** contact form (Web3Forms), WhatsApp buttons, meta and OG tags. After generating og-he.jpg, OPEN it and verify the Hebrew renders right-to-left. If it is reversed or broken, make the og image text English-only for both languages.
 - [ ] **Phase 6:** polish pass, performance check and the list of remaining TODO placeholders.
 
 ## Testing checklist (every phase)
@@ -93,6 +93,9 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - No horizontal overflow.
 - Reduced-motion check: effects are off and content is visible.
 - Visible focus styles, alt text, and `aria-label` on icon-only buttons.
+
+## Git
+- Commit at the end of every phase ("Phase N: ...").
 
 ## Placeholder policy
 - Every placeholder (text, image, number, coordinates) is marked with `// TODO` or `<!-- TODO -->`.
