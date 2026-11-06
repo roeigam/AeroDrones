@@ -104,6 +104,7 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - Visible focus styles, alt text, and `aria-label` on icon-only buttons.
 
 ## Git
+- **Never add AI attribution to commits, PRs or files (no Co-Authored-By, no 'Generated with' lines). The author is roeigam only.** Also enforced by `.claude/settings.json` → `attribution`.
 - Commit at the end of every phase ("Phase N: ..."), then push: `git push origin main`.
 - Remote: https://github.com/roeigam/AeroDrones.git (origin), branch `main`.
 
