@@ -32,7 +32,7 @@ const ogImage = new URL(`/og/og-${lang}.jpg`, site).href;
 const otherLang = LANGS.find((l) => l !== lang)!;
 ---
 <!doctype html>
-<html lang={lang} dir={DIR[lang]}>
+<html lang={lang} dir={DIR[lang]} data-section="top">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

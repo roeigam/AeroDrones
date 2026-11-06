@@ -62,5 +62,6 @@ const { num, label, title, lede, id, align = 'start' } = Astro.props;
   }
   .sh--center .sh__line { display: none; }
   .sh__title { max-inline-size: 22ch; }
-  .sh__lede { max-inline-size: 40rem; text-wrap: balance; }
+  .sh__lede { max-inline-size: 40rem; }
+  @media (min-width: 640px) { .sh__lede { text-wrap: balance; } }
 </style>

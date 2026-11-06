@@ -21,7 +21,7 @@ interface Props {
 const { build, index, lang } = Astro.props;
 const t = content[lang].builds;
 const { name, image, specs } = build.data;
-const MAX_CHIPS = 3;
+const MAX_CHIPS = 2; // + a "+N" chip; keeps every card on one tidy line (the lightbox lists all specs)
 const shown = specs.slice(0, MAX_CHIPS);
 const extra = specs.length - shown.length;
 const num = String(index + 1).padStart(2, '0');

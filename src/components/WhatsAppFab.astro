@@ -1,7 +1,7 @@
 ---
 /**
  * Floating WhatsApp button with a gentle pulse ring, pinned to the inline-end corner.
- * It steps aside (fade + scale) while the Contact section is in view (that section has its own
+ * It steps aside (fade + scale) while the hero or the Contact section is in view (that section has its own
  * big WhatsApp button) and while the mobile menu or the lightbox is open.
  */
 import Icon from './ui/Icon.astro';
@@ -47,7 +47,9 @@ const { href, label, floating = true } = Astro.props;
   }
   @keyframes wa-in { from { opacity: 0; transform: scale(0.4); } }
 
-  /* Step aside: contact section in view, mobile menu or lightbox open */
+  /* Step aside: hero in view (it has its own CTAs, and on phones the button would cover them),
+     contact section in view, mobile menu or lightbox open */
+  :global(html[data-section='top']) .wa--floating,
   :global(html[data-section='contact']) .wa--floating,
   :global(html.no-scroll) .wa--floating {
     opacity: 0;

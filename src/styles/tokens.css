@@ -21,7 +21,7 @@
 
   --text: #eaf1fa;
   --text-muted: #93a3bc;
-  --text-faint: #5d6e89;        /* decorative telemetry labels only */
+  --text-faint: #7385a0;        /* faint labels and notes; AA 4.5:1 on bg-0 and glass surfaces */
 
   --success: #3ee6a8;
   --danger: #ff6b7a;
@@ -100,7 +100,7 @@
   --space-8: 4rem;
   --space-9: 6rem;
   --space-10: 8rem;
-  --section-pad: clamp(5rem, 10vw, 9rem);
+  --section-pad: clamp(4rem, 8vw, 7rem);
   --gutter: clamp(1rem, 4vw, 2.5rem);
   --container: 76rem;
   --container-narrow: 48rem;

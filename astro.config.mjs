@@ -17,6 +17,7 @@ export default defineConfig({
     },
   },
   build: {
-    inlineStylesheets: 'auto',
+    // One page: inlining the CSS removes the only render-blocking request (Lighthouse).
+    inlineStylesheets: 'always',
   },
 });

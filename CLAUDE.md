@@ -88,12 +88,18 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 
 ## Phases (STOP after each one for review)
 - [x] **Phase 0:** this file, the folder structure and the visual design proposal.
-- [x] **Phase 1:** style tile at `/style` (built, awaiting review). It is temporary, noindex, and removed in Phase 6.
+- [x] **Phase 1:** style tile at `/style` (approved, then removed in Phase 6).
 - [x] **Phase 2:** i18n routing, language toggle, base layout, header, footer and the full hero.
 - [x] **Phase 3:** About and Services, with scroll reveals.
 - [x] **Phase 4:** builds collection, gallery and the `<dialog>` lightbox.
 - [x] **Phase 5:** contact form (Web3Forms), WhatsApp buttons, meta and OG tags. After generating og-he.jpg, OPEN it and verify the Hebrew renders right-to-left. If it is reversed or broken, make the og image text English-only for both languages.
-- [ ] **Phase 6:** polish pass, performance check and the list of remaining TODO placeholders.
+- [x] **Phase 6:** polish pass, performance check and the list of remaining TODO placeholders.
+
+## Performance baseline (Phase 6, Lighthouse mobile)
+- `/`: 97 perf, 100 accessibility, 100 best practices. `/en/`: 99 perf, 100, 100.
+- SEO is 66 only because of `noindex`.
+- JS is 9.4 KB (3.6 KB gzipped), inline, with no framework. CSS is inlined (`build.inlineStylesheets: 'always'`).
+- Keep it that way: no new third-party scripts without a reason.
 
 ## Testing checklist (every phase)
 - `npm run check` and `npm run build` are clean.
