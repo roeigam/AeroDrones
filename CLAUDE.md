@@ -28,6 +28,7 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 ## Gotchas (learned)
 - **RTL selectors in Astro scoped styles.** Astro sometimes scopes an ancestor `[dir='rtl']` selector to the component, so it never matches `<html>`. Inside a component `<style>`, ALWAYS write `:global([dir='rtl']) .thing`.
 - **SVG colors.** Don't put `var()` in SVG presentation attributes (`stroke="var(--x)"`). Use `style="stroke: var(--x)"` or CSS classes.
+- **`[hidden]`** is forced to `display: none !important` in base.css. Component `display` rules would otherwise override the attribute (this broke the lightbox slides once).
 - **Images.** `picture { display: contents }` is set globally so `astro:assets` `<Picture>` images size against their real container.
 - **Physical gradient angles** (`90deg`) don't mirror on their own. Give RTL its own angle rather than flipping the element with `scaleX(-1)` when it has positioned children.
 
@@ -82,7 +83,7 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - [x] **Phase 1:** style tile at `/style` (built, awaiting review). It is temporary, noindex, and removed in Phase 6.
 - [x] **Phase 2:** i18n routing, language toggle, base layout, header, footer and the full hero.
 - [x] **Phase 3:** About and Services, with scroll reveals.
-- [ ] **Phase 4:** builds collection, gallery and the `<dialog>` lightbox.
+- [x] **Phase 4:** builds collection, gallery and the `<dialog>` lightbox.
 - [ ] **Phase 5:** contact form (Web3Forms), WhatsApp buttons, meta and OG tags. After generating og-he.jpg, OPEN it and verify the Hebrew renders right-to-left. If it is reversed or broken, make the og image text English-only for both languages.
 - [ ] **Phase 6:** polish pass, performance check and the list of remaining TODO placeholders.
 

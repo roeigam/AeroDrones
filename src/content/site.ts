@@ -127,6 +127,18 @@ const he = {
     ctaText: 'לא בטוחים מה בדיוק צריך?',
     ctaLink: 'ספרו לי על הרחפן',
   },
+  builds: {
+    lede: 'כל רחפן נבנה, מכוונן ונבדק בשטח. לחצו על בנייה כדי לראות אותה מקרוב.',
+    open: 'פתיחת',
+    moreSpecs: 'מפרטים נוספים',
+    dialogLabel: 'גלריית הבנייה',
+    close: 'סגירה',
+    prev: 'הבנייה הקודמת',
+    next: 'הבנייה הבאה',
+    of: 'מתוך',
+    specsTitle: 'מפרט',
+    slide: 'שקופית',
+  },
   footer: {
     // TODO: final copy from the client
     tagline: 'רחפני FPV שנבנים, מתוקנים ומכוונים בעבודת יד.',
@@ -213,6 +225,18 @@ const en: typeof he = {
     ],
     ctaText: 'Not sure exactly what you need?',
     ctaLink: 'Tell me about your drone',
+  },
+  builds: {
+    lede: 'Every drone is built, tuned and field-tested. Tap a build to see it up close.',
+    open: 'Open',
+    moreSpecs: 'more specs',
+    dialogLabel: 'Builds gallery',
+    close: 'Close',
+    prev: 'Previous build',
+    next: 'Next build',
+    of: 'of',
+    specsTitle: 'Specs',
+    slide: 'Slide',
   },
   footer: {
     // TODO: final copy from the client

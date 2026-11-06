@@ -1,0 +1,48 @@
+---
+/**
+ * "My builds": gallery grid (1 col mobile, 2 tablet, 3 desktop) from the builds content
+ * collection, sorted by `order`, plus the <dialog> lightbox.
+ */
+import { getCollection } from 'astro:content';
+import SectionHeading from '../ui/SectionHeading.astro';
+import BuildCard from '../builds/BuildCard.astro';
+import Lightbox from '../builds/Lightbox.astro';
+import { content } from '../../content/site';
+import type { Lang } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const h = t.sections.builds;
+const builds = (await getCollection('builds')).sort((a, b) => a.data.order - b.data.order);
+---
+<section class="section builds" id="builds" data-section aria-labelledby="builds-title">
+  <div class="builds__glow glow-pool" aria-hidden="true"></div>
+  <div class="container">
+    <SectionHeading num={h.num} label={h.label} title={h.title} lede={t.builds.lede} id="builds-title" />
+    <ul class="builds__grid" role="list">
+      {builds.map((b, i) => <BuildCard build={b} index={i} lang={lang} />)}
+    </ul>
+  </div>
+  {builds.length > 0 && <Lightbox builds={builds} lang={lang} />}
+</section>
+
+<style>
+  .builds__glow {
+    inline-size: min(60rem, 120vw);
+    inset-block-start: 10%;
+    inset-inline-start: -25%;
+    opacity: 0.6;
+    z-index: -1;
+  }
+  .builds__grid {
+    display: grid;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+  }
+  @media (min-width: 640px) { .builds__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .builds__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>
