@@ -1,0 +1,189 @@
+---
+/**
+ * 404 "signal lost" page in the HUD style. Rendered by src/pages/404.astro (he) and
+ * src/pages/en/404.astro (en). Always noindex. All copy from site.ts.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Brand from './ui/Brand.astro';
+import Button from './ui/Button.astro';
+import HudRings from './ui/HudRings.astro';
+import LangToggle from './LangToggle.astro';
+import { content } from '../content/site';
+import { langRoot, type Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const nf = t.notFound;
+const home = langRoot(lang);
+const readouts = [
+  { k: 'SIG', v: '0', u: '%' },
+  { k: 'GPS', v: '0', u: 'SAT' },
+  { k: 'LINK', v: 'LOST' },
+  { k: 'ALT', v: '---', u: 'm' },
+];
+---
+<BaseLayout lang={lang} title={nf.metaTitle} description={t.meta.description} noindex skipLabel={t.a11y.skipToContent}>
+  <header class="nf-top container">
+    <a class="nf-top__brand" href={home}>
+      <Brand lang={lang} size="md" />
+      <span class="visually-hidden">— {nf.home}</span>
+    </a>
+    <LangToggle lang={lang} groupLabel={t.a11y.langSwitch} />
+  </header>
+
+  <main id="main" class="nf" tabindex="-1">
+    <div class="nf__scope" aria-hidden="true">
+      <div class="nf__glow"></div>
+      <HudRings />
+      <span class="nf__cross"></span>
+      <span class="nf__static"></span>
+      <ul class="nf__readouts" role="list">
+        {readouts.map((r, i) => (
+          <li class={`nf-ro nf-ro--${i}`} dir="ltr">
+            <span class="nf-ro__k">{r.k}</span>
+            <span class="nf-ro__v">{r.v}</span>
+            {r.u && <span class="nf-ro__u">{r.u}</span>}
+          </li>
+        ))}
+      </ul>
+      <span class="nf__code" dir="ltr">404</span>
+    </div>
+
+    <div class="nf__copy">
+      <p class="nf__eyebrow t-mono"><span class="nf__dot"></span>{nf.eyebrow}</p>
+      <h1 class="nf__title t-h1">{nf.title}</h1>
+      <p class="nf__text t-lead">{nf.text}</p>
+      <div class="nf__cta">
+        <Button href={home} variant="primary" size="lg">{nf.home}</Button>
+        <Button href={`${home}#builds`} variant="ghost" size="lg">{nf.builds}</Button>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .nf-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    block-size: var(--header-h);
+  }
+  .nf-top__brand { display: inline-flex; border-radius: var(--radius-sm); }
+
+  .nf {
+    min-block-size: calc(100svh - var(--header-h));
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-6);
+    padding: var(--space-6) var(--gutter) var(--space-9);
+    text-align: center;
+    overflow: clip;
+  }
+  .nf:focus { outline: none; }
+
+  /* ---- Scope: rings + crosshair + big 404 ---- */
+  .nf__scope {
+    position: relative;
+    inline-size: min(26rem, 82vw);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+  .nf__glow {
+    position: absolute;
+    inset: -15%;
+    border-radius: 50%;
+    background:
+      radial-gradient(closest-side, color-mix(in oklab, var(--danger) 16%, transparent), transparent 70%),
+      radial-gradient(closest-side at 60% 60%, var(--secondary-20), transparent 80%);
+    animation: nf-breathe 5s var(--ease-in-out) infinite;
+  }
+  @keyframes nf-breathe { 50% { opacity: 0.6; transform: scale(0.96); } }
+  .nf__cross {
+    position: absolute;
+    inset: 18%;
+    background:
+      linear-gradient(var(--accent-20), var(--accent-20)) center / 1px 100% no-repeat,
+      linear-gradient(var(--accent-20), var(--accent-20)) center / 100% 1px no-repeat;
+    -webkit-mask: radial-gradient(circle, transparent 24%, #000 25%);
+    mask: radial-gradient(circle, transparent 24%, #000 25%);
+  }
+  /* faint "no signal" static, animated with opacity only */
+  .nf__static {
+    position: absolute;
+    inset: 22%;
+    border-radius: 50%;
+    opacity: 0.12;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: nf-static 0.9s steps(3, end) infinite;
+  }
+  @keyframes nf-static { 33% { opacity: 0.05; } 66% { opacity: 0.16; } }
+  .nf__code {
+    position: relative;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: clamp(4rem, 2.5rem + 8vw, 7.5rem);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: nf-flicker 4s steps(1, end) infinite;
+  }
+  @keyframes nf-flicker {
+    0%, 100% { opacity: 1; }
+    42% { opacity: 0.55; }
+    44% { opacity: 1; }
+    71% { opacity: 0.75; }
+    72% { opacity: 1; }
+  }
+
+  .nf__readouts { position: absolute; inset: 0; margin: 0; padding: 0; }
+  .nf-ro {
+    position: absolute;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+    padding: 0.3em 0.55em;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-inline-start: 1px solid color-mix(in oklab, var(--danger) 60%, transparent);
+    background: linear-gradient(90deg, color-mix(in oklab, var(--danger) 8%, transparent), transparent);
+  }
+  .nf-ro__k { color: var(--danger); font-weight: 500; }
+  .nf-ro__v { color: var(--text); }
+  .nf-ro--0 { inset-block-start: 6%; inset-inline-start: -4%; }
+  .nf-ro--1 { inset-block-start: 12%; inset-inline-end: -6%; }
+  .nf-ro--2 { inset-block-end: 12%; inset-inline-start: -6%; }
+  .nf-ro--3 { inset-block-end: 6%; inset-inline-end: -2%; }
+
+  /* ---- Copy ---- */
+  .nf__copy { display: grid; justify-items: center; gap: var(--space-4); max-inline-size: 36rem; }
+  .nf__eyebrow { display: inline-flex; align-items: center; gap: 0.6em; color: var(--danger); }
+  .nf__dot {
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+    animation: nf-blink 1.4s steps(1, end) infinite;
+  }
+  @keyframes nf-blink { 50% { opacity: 0.15; } }
+  .nf__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-block-start: var(--space-3); }
+
+  @media (max-width: 480px) {
+    .nf-ro { font-size: 0.5625rem; }
+    .nf-ro--0, .nf-ro--2 { inset-inline-start: 0; }
+    .nf-ro--1, .nf-ro--3 { inset-inline-end: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf__glow, .nf__static, .nf__code, .nf__dot { animation: none; }
+  }
+</style>

@@ -34,11 +34,31 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 
 - **OG images (Pango).** Pango picks paragraph direction from the first strong character, so Hebrew strings that start with Latin render scrambled. `scripts/gen-og.mjs` prefixes Hebrew with U+200F (RLM). Always open `og-he.jpg` after regenerating.
 - **Escapes.** Shell, sed and editor tools can mangle `\uXXXX` escapes. Prefer `String.fromCharCode(0x200f)` or `\p{Script=Hebrew}` with the `u` flag.
+- **`file://` rules.**
+  - Module scripts with `src` are blocked, and so are `crossorigin` preloads.
+  - Firefox only allows fonts from the page's own folder.
+  - Folder links need an explicit `index.html`.
+  - The offline build script handles all of these, so keep its verification step.
 - **Hidden overflow.** Sections use `overflow-x: clip`, which HIDES content that is too wide instead of scrolling. Grids need `minmax(0, 1fr)` columns, and the clip check (text and controls inside the viewport) must pass, not just the scrollWidth check.
+
+## Delivery targets
+- **Netlify:** `npm run build` → `dist/`. This build is unchanged; `netlify.toml` configures it, and Netlify's `URL` env feeds canonical and OG.
+- **Offline:** `npm run build:offline` → `AeroDrones-offline/` (git-ignored) for the client, opened by double-clicking `index.html` over `file://`. `scripts/build-offline.mjs`:
+  - builds with `PUBLIC_OFFLINE_BUILD=1`, which drops canonical, hreflang and OG tags and makes the contact form offline-aware;
+  - rewrites every root-relative URL to a relative one, giving folder URLs an explicit `index.html`;
+  - inlines module scripts and embeds the woff2 fonts as data URIs, and removes font preloads;
+  - deletes host-only files;
+  - FAILS if any absolute path is left.
+- **Contact form on `file://`:** Web3Forms rejects origin `null` (CORS preflight 403). The form never fetches there: it shows a note and, on submit, a WhatsApp button pre-filled with the message.
+- **Test the offline folder via `file://` in Playwright** (not through a server), in both languages:
+  - no failed requests or console errors;
+  - fonts and images load;
+  - lightbox, language switch, mobile menu and 404 pages work.
 
 ## Environment
 - `PUBLIC_WEB3FORMS_KEY`: the contact form key (see `.env.example`).
-- `SITE_URL`: the production origin for canonical and og URLs. On Netlify, the URL is used automatically as a fallback.
+- `SITE_URL`: the production origin for canonical and og URLs. On Netlify, the URL is used automatically as a fallback. Empty or missing is fine for the offline build.
+- `PUBLIC_OFFLINE_BUILD`: set only by `scripts/build-offline.mjs`. Never set it by hand for Netlify.
 
 ## Stack
 - Astro (latest), static output, TypeScript.
@@ -53,7 +73,8 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 | Script | What it does |
 |---|---|
 | `npm run dev` | Start the dev server |
-| `npm run build` | Build the static site |
+| `npm run build` | Web build for Netlify (`dist/`) |
+| `npm run build:offline` | Offline copy for the client (`AeroDrones-offline/`) |
 | `npm run preview` | Preview the built site |
 | `npm run check` | Run `astro check` |
 

@@ -26,12 +26,12 @@ export const shared = {
       { k: 'BAT', v: '16.8', u: 'V' },
       { k: 'GPS', v: '14', u: 'SAT' },
     ],
-    /** Used by the 'framed' mode corner labels. TODO: real coordinates (or keep decorative). */
-    frameLabels: { end: 'CAM-01', bottomStart: '32.08°N 34.78°E', bottomEnd: '1080p · 120fps' },
+    /** Decorative corner labels for the 'framed' mode (neutral HUD values). */
+    frameLabels: { end: 'CAM-01', bottomStart: 'GRID 07-B · HDG 045°', bottomEnd: '1080p · 120fps' },
   },
   about: {
-    /** Decorative HUD frame labels around the About photo. TODO: real values or keep decorative. */
-    frameLabels: { end: 'CAM-02', bottomStart: 'ISO 400 · f/2.8', bottomEnd: '32.08°N 34.78°E' },
+    /** Decorative HUD frame labels around the About photo (neutral values). */
+    frameLabels: { end: 'CAM-02', bottomStart: 'ISO 400 · f/2.8', bottomEnd: 'GRID 07-B · HDG 045°' },
   },
   /** Language names, each written in its own language (used by the flag toggle). */
   langNames: { he: 'עברית', en: 'English' } as Record<Lang, string>,
@@ -177,6 +177,12 @@ const he = {
       privacy: 'הפרטים משמשים רק כדי לחזור אליכם.',
       subject: 'פנייה חדשה מהאתר (עברית) — AeroDrones',
       language: 'Hebrew',
+      offline: {
+        note: 'זו גרסה לא־מקוונת של האתר, ולכן הטופס לא יכול לשלוח מכאן. הכי מהיר: וואטסאפ.',
+        title: 'אי אפשר לשלוח את הטופס מהגרסה הלא־מקוונת.',
+        text: 'ההודעה שכתבתם מוכנה — אפשר לשלוח אותה בוואטסאפ בלחיצה אחת.',
+        cta: 'שליחת ההודעה בוואטסאפ',
+      },
       errors: {
         nameRequired: 'נא למלא שם',
         phoneRequired: 'נא למלא מספר טלפון',
@@ -195,6 +201,14 @@ const he = {
         text: 'נסו שוב בעוד רגע, או שלחו לי הודעה בוואטסאפ.',
       },
     },
+  },
+  notFound: {
+    metaTitle: 'העמוד לא נמצא — AeroDrones',
+    eyebrow: 'ERR 404 · האות אבד',
+    title: 'איבדנו את האות.',
+    text: 'העמוד שחיפשתם לא קיים או שעבר מקום. בואו נחזור לבסיס.',
+    home: 'חזרה לעמוד הבית',
+    builds: 'לבנייה שלי',
   },
   footer: {
     // TODO: final copy from the client
@@ -329,6 +343,12 @@ const en: typeof he = {
       privacy: 'Your details are only used to get back to you.',
       subject: 'New message from the website (English) — AeroDrones',
       language: 'English',
+      offline: {
+        note: "This is an offline copy of the site, so the form can't send from here. Fastest: WhatsApp.",
+        title: "The form can't send from the offline copy.",
+        text: 'Your message is ready — send it on WhatsApp in one tap.',
+        cta: 'Send this on WhatsApp',
+      },
       errors: {
         nameRequired: 'Please enter your name',
         phoneRequired: 'Please enter a phone number',
@@ -347,6 +367,14 @@ const en: typeof he = {
         text: 'Please try again in a moment, or message me on WhatsApp.',
       },
     },
+  },
+  notFound: {
+    metaTitle: 'Page not found — AeroDrones',
+    eyebrow: 'ERR 404 · Signal lost',
+    title: 'We lost the signal.',
+    text: "The page you're looking for doesn't exist or has moved. Let's bring you back to base.",
+    home: 'Back to home',
+    builds: 'See my builds',
   },
   footer: {
     // TODO: final copy from the client

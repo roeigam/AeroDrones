@@ -30,6 +30,9 @@ const meta = content[lang].meta;
 const pageUrl = new URL(langRoot(lang), site).href;
 const ogImage = new URL(`/og/og-${lang}.jpg`, site).href;
 const otherLang = LANGS.find((l) => l !== lang)!;
+// The offline (file://) copy has no URL of its own: skip canonical/hreflang/OG tags there.
+const isOffline = import.meta.env.PUBLIC_OFFLINE_BUILD === '1';
+const webMeta = localized && !isOffline;
 ---
 <!doctype html>
 <html lang={lang} dir={DIR[lang]} data-section="top">
@@ -42,15 +45,17 @@ const otherLang = LANGS.find((l) => l !== lang)!;
     <meta name="theme-color" content="#04070d" />
     <meta name="color-scheme" content="dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preload" href={preloadFont} as="font" type="font/woff2" crossorigin />
-    {localized && (
+    {webMeta && (
       <>
         <link rel="canonical" href={pageUrl} />
         {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(langRoot(l), site).href} />)}
         <link rel="alternate" hreflang="x-default" href={new URL(langRoot('he'), site).href} />
       </>
     )}
-    {localized && (
+    {webMeta && (
       <>
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content={shared.brand} />

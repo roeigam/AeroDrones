@@ -6,15 +6,40 @@ Built with [Astro](https://astro.build) as a fully static site.
 
 ```bash
 npm install
-npm run dev       # local dev server → http://localhost:4321
-npm run build     # static build → dist/
-npm run preview   # preview the production build
-npm run check     # type-check
+npm run dev            # local dev server → http://localhost:4321
+npm run build          # web build for Netlify → dist/
+npm run build:offline  # offline copy for the client → AeroDrones-offline/ (double-click index.html)
+npm run preview        # preview the web build
+npm run check          # type-check
 ```
 
 - **All site text** (both languages) lives in `src/content/site.ts`.
 - **All design tokens** (colors, fonts, spacing, motion) live in `src/styles/tokens.css`. Change `--accent` to re-theme the whole site.
 - **Before delivery**, see `TODO.md`. Image credits are in `CREDITS.md`.
+
+## Deploy and offline version
+Full details are in `DEPLOY.md`.
+
+- **Netlify (online):** connect the GitHub repo in Netlify. `netlify.toml` already sets the build (`npm run build` → `dist`). For the contact form, add the `PUBLIC_WEB3FORMS_KEY` environment variable. Every push to `main` redeploys.
+- **Offline (for the client):**
+  1. Run `npm run build:offline`.
+  2. Zip the `AeroDrones-offline` folder and send it.
+  3. The client unzips it and **double-clicks `index.html`**. No server or internet is needed to browse.
+- **Offline contact form:** it can't send from a local file, so it offers to send the message on WhatsApp instead.
+- **Rebuilding the offline copy** after any change: run `npm run build:offline` again.
+
+<div dir="rtl" lang="he">
+
+### פריסה וגרסה לא־מקוונת
+- **Netlify (אונליין):** מחברים את המאגר ב־GitHub ל־Netlify. ההגדרות כבר נמצאות ב־`netlify.toml`. בשביל טופס יצירת הקשר מוסיפים את משתנה הסביבה `PUBLIC_WEB3FORMS_KEY`. כל דחיפה ל־`main` מעדכנת את האתר.
+- **גרסה לא־מקוונת ללקוח:**
+  1. מריצים `npm run build:offline`.
+  2. מכווצים את התיקייה `AeroDrones-offline` ושולחים אותה.
+  3. הלקוח מחלץ את הקובץ ו**לוחץ פעמיים על `index.html`**. לא צריך שרת או אינטרנט כדי לגלוש.
+- **הטופס בגרסה הלא־מקוונת:** הוא לא יכול לשלוח מקובץ מקומי, ולכן מציע לשלוח את ההודעה בוואטסאפ.
+- **אחרי כל שינוי** מריצים שוב `npm run build:offline`.
+
+</div>
 
 ---
 

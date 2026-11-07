@@ -22,6 +22,16 @@ if (form) {
   const success = form.parentElement!.querySelector<HTMLElement>('[data-cf-success]')!;
   const again = success.querySelector<HTMLButtonElement>('[data-cf-again]');
   const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('.field__input'));
+  const offlineNote = form.querySelector<HTMLElement>('[data-cf-offline-note]');
+  const offlineBox = form.querySelector<HTMLElement>('[data-cf-offline]');
+  const offlineLink = form.querySelector<HTMLAnchorElement>('[data-cf-offline-link]');
+  /**
+   * Opened from a local folder (the offline copy): Web3Forms rejects requests from origin "null"
+   * (CORS preflight 403), so the form never tries to send. It explains that up front and, on submit,
+   * hands the visitor's message to WhatsApp instead.
+   */
+  const isFile = location.protocol === 'file:';
+  if (isFile && offlineNote) offlineNote.hidden = false;
   let attempted = false;
   let busy = false;
 
@@ -111,6 +121,23 @@ if (form) {
     alertBox.style.animation = '';
   }
 
+  function showOffline(data: Record<string, string>) {
+    if (!offlineBox) return showError();
+    const number = form!.dataset.waNumber ?? '';
+    const greeting = form!.dataset.waGreeting ?? '';
+    const signature = [data.name, data.phone].filter(Boolean).join(' · ');
+    const NL = String.fromCharCode(10);
+    const parts = [greeting, data.message ?? '', signature ? `— ${signature}` : ''].filter(Boolean);
+    const text = parts.join(NL + NL);
+    if (offlineLink) offlineLink.href = `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+    alertBox.hidden = true;
+    offlineBox.hidden = false;
+    offlineBox.style.animation = 'none';
+    void offlineBox.offsetWidth;
+    offlineBox.style.animation = '';
+    offlineLink?.focus({ preventScroll: true });
+  }
+
   function showSuccess() {
     form!.hidden = true;
     form!.parentElement!.querySelector<HTMLElement>('.cf-panel__head')?.setAttribute('hidden', '');
@@ -131,6 +158,7 @@ if (form) {
     if (busy) return;
     attempted = true;
     alertBox.hidden = true;
+    if (offlineBox) offlineBox.hidden = true;
 
     const invalid = validateAll();
     if (invalid.length) {
@@ -143,6 +171,10 @@ if (form) {
     // Honeypot ticked → silently "succeed" without sending
     if (data.botcheck) {
       showSuccess();
+      return;
+    }
+    if (isFile) {
+      showOffline(data);
       return;
     }
     if (!data.access_key) {

@@ -68,6 +68,8 @@ const wa = whatsappHref(lang);
           data-contact-form
           data-errors={JSON.stringify(f.errors)}
           data-sending={f.sending}
+          data-wa-number={shared.whatsappNumber}
+          data-wa-greeting={c.whatsapp.greeting}
         >
           <input type="hidden" name="access_key" value={accessKey} />
           <input type="hidden" name="subject" value={f.subject} />
@@ -75,6 +77,12 @@ const wa = whatsappHref(lang);
           <input type="hidden" name="language" value={f.language} />
           {/* Web3Forms honeypot: bots tick it, humans never see it */}
           <input type="checkbox" name="botcheck" class="cf__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          {/* Shown only when the page is opened from a local folder (file://): the form can't reach Web3Forms there */}
+          <p class="cf__note" data-cf-offline-note hidden>
+            <span class="cf__note-icon" aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
+            <span>{f.offline.note}</span>
+          </p>
 
           <div class="cf__row">
             <Field label={f.name} name="name" autocomplete="name" required placeholder={f.namePlaceholder} maxlength={80} />
@@ -89,6 +97,11 @@ const wa = whatsappHref(lang);
             <a class="cf__alert-link" href={wa} target="_blank" rel="noopener noreferrer">
               <Icon name="whatsapp" size={16} /> {shared.whatsappName}
             </a>
+          </div>
+
+          <div class="cf__offline" role="alert" data-cf-offline hidden>
+            <p><strong>{f.offline.title}</strong> {f.offline.text}</p>
+            <Button href={wa} variant="whatsapp" icon="arrow" target="_blank" rel="noopener noreferrer" data-cf-offline-link>{f.offline.cta}</Button>
           </div>
 
           <div class="cf__foot">
@@ -225,6 +238,41 @@ const wa = whatsappHref(lang);
     font-size: 0.8125rem;
   }
   .cf__alert-link:hover { border-color: #25d366; color: #3ce07a; }
+
+  /* ---- Offline copy (file://) ---- */
+  .cf__note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-block-end: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--accent-5);
+    border: 1px solid var(--accent-20);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+  .cf__note-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border-radius: 50%;
+    color: #fff;
+    background: radial-gradient(circle at 30% 25%, #3ce07a, #1faa55 70%);
+  }
+  .cf__offline {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--success) 8%, transparent);
+    border: 1px solid color-mix(in oklab, var(--success) 35%, transparent);
+    font-size: var(--fs-small);
+    animation: cf-pop 420ms var(--ease-out) both;
+  }
 
   /* ---- Success ---- */
   .cf-success {

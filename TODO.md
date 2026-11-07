@@ -31,12 +31,11 @@ Every placeholder in the code is marked `TODO`. To list them all, run `git grep 
 - [ ] **Indexing.** Decide whether the site should appear in Google. It is `noindex` by default (`shared.seo.noindex`).
 
 ## 2. Needed from you (keys, SITE_URL, hosting)
+- [ ] **Netlify.** Import `roeigam/AeroDrones` (zero-config via `netlify.toml`) and optionally rename the site. On `*.netlify.app`, link previews work without `SITE_URL`, because Netlify provides `URL` automatically.
+- [ ] **Offline copy.** Run `npm run build:offline`, zip `AeroDrones-offline/` and send it. Rebuild it after every content change.
 - [ ] **Web3Forms key.** Create one at web3forms.com with the client's email, then set `PUBLIC_WEB3FORMS_KEY` in the host's environment variables.
   - Without the key, the form shows its error state and points visitors to WhatsApp.
-- [ ] **Hosting.** Connect `roeigam/AeroDrones` to Netlify or Cloudflare Pages. Build: `npm run build`, output: `dist`, Node 22.23 or newer (`.nvmrc` = 24). See `DEPLOY.md`.
-- [ ] **Domain and `SITE_URL`.** Connect the domain and set `SITE_URL` (for example `https://aerodrones.co.il`).
-  - Until then, canonical, `og:url` and `og:image` use the placeholder `aerodrones.example.com`, so WhatsApp link previews won't show the image.
-  - On Netlify, the site URL is used automatically as a fallback.
+- [ ] **Custom domain (only if one is added later).** Set `SITE_URL` to it. Without Netlify's `URL` or `SITE_URL`, local builds fall back to the placeholder `aerodrones.example.com`.
 - [ ] **Post-deploy checks** (`DEPLOY.md`):
   - Send a real form message in each language.
   - Tap the WhatsApp buttons on a phone.
@@ -50,9 +49,7 @@ Every placeholder in the code is marked `TODO`. To list them all, run `git grep 
   - Consider adding `@astrojs/sitemap` and a `robots.txt`.
 
 ## 3. Optional improvements
-- [ ] **Decorative HUD labels.** Coordinates `32.08°N 34.78°E`, `CAM-01` and `CAM-02`, and the camera settings in `shared.hero.frameLabels` and `shared.about.frameLabels` can be personalized, for example his real city, or kept as decoration.
-- [ ] **Home-screen icon.** Add `apple-touch-icon.png` (180×180) and a PNG favicon. Today there is only `favicon.svg`, which iOS ignores for home-screen icons.
-- [ ] **Custom 404 page** in the site's style (`src/pages/404.astro`).
+- [ ] **Decorative HUD labels** (`GRID 07-B · HDG 045°`, `CAM-01` and `CAM-02`, the camera settings in `shared.hero.frameLabels` and `shared.about.frameLabels`) are neutral on purpose. Personalize them only if wanted.
 - [ ] **DOM size.** About 1,050 elements; Lighthouse warns above 800.
   - Most of it is the lightbox, which renders every slide up front.
   - If the gallery grows past roughly 20 builds, render slides lazily from JSON.

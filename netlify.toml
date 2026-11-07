@@ -1,0 +1,8 @@
+# Netlify: zero-config deploy of the normal build (dist/). Netlify sets URL=https://<name>.netlify.app,
+# which astro.config.mjs uses for canonical/og URLs when SITE_URL isn't set.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
