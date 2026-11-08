@@ -76,7 +76,6 @@ Change the content (`src/content/site.ts`, builds, photos), then run `npm run bu
 ## Regenerating images
 - **OG images** (link previews) are in `public/og/`. After changing the hero photo or the copy, run `npm run gen:og`, then open `public/og/og-he.jpg` and check the Hebrew reads right-to-left.
 - **Icons** (`apple-touch-icon.png`, `favicon-32.png`): `npm run gen:icons`.
-- **Build placeholders:** `npm run gen:placeholders`. Only needed until the real build photos replace them.
 
 ## Cloudflare Pages (alternative)
 Use the Astro preset (`npm run build`, output `dist`) with `NODE_VERSION=24` and the same env variables. Cloudflare serves the nearest `404.html` by itself. The English 404 lives at `en/404/index.html`, so unknown `/en/` paths there fall back to the Hebrew 404.

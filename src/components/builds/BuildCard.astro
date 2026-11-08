@@ -25,9 +25,11 @@ const MAX_CHIPS = 2; // + a "+N" chip; keeps every card on one tidy line (the li
 const shown = specs.slice(0, MAX_CHIPS);
 const extra = specs.length - shown.length;
 const num = String(index + 1).padStart(2, '0');
+// Native size caps the rendered image: small photos are never upscaled (they center on the surface instead).
+const native = `--nw: ${image.width}px; --nh: ${image.height}px`;
 ---
 <GlassCard as="li" class="bc" data-reveal style={`--i: ${index % 3}`}>
-  <div class="bc__media">
+  <div class="bc__media" style={native}>
     <Picture
       src={image}
       alt=""
@@ -71,8 +73,13 @@ const num = String(index + 1).padStart(2, '0');
     background: var(--surface-1);
   }
   .bc__media :global(img) {
+    position: absolute;
+    inset: 0;
+    margin: auto;
     inline-size: 100%;
     block-size: 100%;
+    max-inline-size: var(--nw, none);
+    max-block-size: var(--nh, none);
     object-fit: cover;
     transition: transform 900ms var(--ease-out);
   }

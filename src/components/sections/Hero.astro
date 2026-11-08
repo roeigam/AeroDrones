@@ -8,8 +8,8 @@ import Button from '../ui/Button.astro';
 import HeroVisual from '../ui/HeroVisual.astro';
 import { content, shared } from '../../content/site';
 import type { Lang } from '../../i18n/utils';
-// TODO: replace with the client's hero photo (dark background or transparent PNG works best for 'cutout' mode)
-import heroImg from '../../assets/hero/hero-drone.jpg';
+// Client photo, cropped to 4:3 around the drone (see CREDITS.md). The framed mode uses the photo's own ratio.
+import heroImg from '../../assets/hero/hero.jpg';
 
 interface Props {
   lang: Lang;

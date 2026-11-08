@@ -50,7 +50,7 @@ const pictureProps = {
       {mode === 'cutout' ? (
         <Picture {...pictureProps} class="hv__img" />
       ) : (
-        <HudFrame labels={frameLabels} rec ratio="1">
+        <HudFrame labels={frameLabels} rec ratio={`${image.width} / ${image.height}`}>
           <Picture {...pictureProps} class="hv__img" />
         </HudFrame>
       )}
@@ -142,6 +142,10 @@ const pictureProps = {
 
   /* ---- framed mode ---- */
   .hv--framed .hv__stage { inline-size: 72%; }
+  /* narrow frames: the two bottom corner labels would collide, keep only the start one */
+  @media (max-width: 520px) {
+    .hv--framed :global(.hud__label--ee) { display: none; }
+  }
 
   /* ---- telemetry readouts ---- */
   .hv__readouts { position: absolute; inset: 0; margin: 0; pointer-events: none; }

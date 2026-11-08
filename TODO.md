@@ -9,12 +9,12 @@ Every placeholder in the code is marked `TODO`. To list them all, run `git grep 
   - Get the real values, or remove the row by setting `stats: []` in both `he` and `en`. An empty array hides it; the layout is designed to work without it.
 - [ ] **WhatsApp number.** `shared.whatsappNumber` is a placeholder (`972500000000`). Use international format, digits only.
 - [ ] **Social links.** `shared.social` URLs point to platform home pages. Replace them with his profiles, and remove any he doesn't use.
-- [ ] **Hero photo.** `src/assets/hero/hero-drone.jpg` is an Unsplash placeholder.
-  - Best is a drone shot on a dark or plain background, or a transparent PNG, because hero mode is `cutout`.
-  - Then update `hero.imageAlt` in both languages and run `npm run gen:og`.
-- [ ] **About photo.** `src/assets/about/about-builder.jpg` is a placeholder; ideally a photo of him or his workbench. Update `about.imageAlt` in both languages.
-- [ ] **Build gallery.** All 6 builds in `src/content/builds/*.md` are invented (photos, names, specs and descriptions).
-  - Replace them with his real builds. See README → "How to add a new build".
+- [x] **Hero, About and build photos.** The client's photos are in (see `CREDITS.md`). Hero mode is now `framed`.
+- [ ] **Build names and specs.** The 5 builds in `src/content/builds/*.md` have neutral names (he/en) and specs written ONLY from what is visible in each photo. All are marked TODO.
+  - The client must confirm or correct each name and add real specs (frame, motors, battery, FC/ESC, video system, weight). Optionally add a `description` per language.
+- [ ] **Photo rights.** The client should confirm owning, or having permission to use, every photo in `CREDITS.md`.
+  - `07-build-fpv-freestyle-blue-props.jpg` has an oscarliang.com watermark and was left out. Add it only if the client has the rights to it, ideally as the original unwatermarked file.
+- [ ] **Higher-resolution photo for build 04** (`quad-landing-legs.jpg`, 495×619). It is never upscaled, so on larger screens it shows smaller than the other builds. A larger original would fix that.
 - [ ] **All copy.** Every Hebrew and English text in `site.ts` is placeholder copy written by us:
   - meta title and description
   - hero
@@ -57,4 +57,3 @@ Every placeholder in the code is marked `TODO`. To list them all, run `git grep 
   - Could drop unused font weights after the final copy is in, or preload the Heebo body font.
 - [ ] **Parallax in Firefox.** The hero parallax uses CSS scroll-driven animations (Chrome, Edge and Safari 26+). Firefox simply shows no parallax. A tiny JS fallback is possible if wanted.
 - [ ] **Analytics.** If he wants visitor stats, add a privacy-friendly option such as Plausible or Cloudflare Web Analytics, which need no cookie banner.
-- [ ] **Placeholder render script.** Once all real build photos are in, delete `scripts/gen-build-placeholders.mjs`.

@@ -139,4 +139,4 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - `TODO.md` is the delivery checklist. Add anything the client MUST supply or approve.
 - Every placeholder (text, image, number, coordinates) is marked with `// TODO` or `<!-- TODO -->`.
 - Stock photos (Unsplash or Pexels) are recorded in `CREDITS.md` with source URL, photographer and license.
-- The build gallery uses generated HUD-style placeholder images (`scripts/gen-build-placeholders.mjs`) until real photos arrive.
+- Client photos: originals live in `client-photos/` (git-ignored). Crops are documented in `CREDITS.md`. Gallery images are never displayed larger than their native size (`--nw`/`--nh` caps in BuildCard and Lightbox).

@@ -63,6 +63,8 @@
   --shadow-sm: 0 2px 8px rgb(0 0 0 / 0.35);
   --shadow-md: 0 12px 32px -8px rgb(0 0 0 / 0.55);
   --shadow-lg: 0 30px 80px -20px rgb(0 0 0 / 0.7);
+  /* small HUD text over photos: tight edge + soft halo, readable on bright skies too */
+  --text-shadow-hud: 0 0 2px rgb(0 0 0 / 0.95), 0 1px 3px rgb(0 0 0 / 0.8), 0 0 10px rgb(0 0 0 / 0.6);
   --glow-sm: 0 0 12px var(--accent-35);
   --glow-md: 0 0 18px var(--accent-35), 0 0 42px var(--accent-20);
   --glow-lg: 0 0 30px var(--accent-35), 0 0 80px var(--accent-20), 0 0 140px var(--secondary-20);

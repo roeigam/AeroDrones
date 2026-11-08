@@ -19,7 +19,7 @@ const FONT = {
   heebo: path.join(root, 'scripts/fonts/Heebo.ttf'),
   mono: path.join(root, 'scripts/fonts/JetBrainsMono.ttf'),
 };
-const HERO = path.join(root, 'src/assets/hero/hero-drone.jpg'); // TODO: regenerate once the real hero photo arrives
+const HERO = path.join(root, 'src/assets/hero/hero.jpg');
 const OUT = path.join(root, 'public/og');
 mkdirSync(OUT, { recursive: true });
 

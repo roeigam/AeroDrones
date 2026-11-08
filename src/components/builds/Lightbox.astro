@@ -26,7 +26,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <div class="lb__panel" data-lb-panel>
     <div class="lb__stage" data-lb-stage>
       {builds.map((b, i) => (
-        <div class="lb__media" data-lb-media={i} hidden>
+        <div class="lb__media" data-lb-media={i} style={`--nw: ${b.data.image.width}px; --nh: ${b.data.image.height}px`} hidden>
           <Picture
             src={b.data.image}
             alt={b.data.name[lang]}
@@ -140,7 +140,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
     touch-action: pan-y;
   }
   .lb__media { grid-area: 1 / 1; display: grid; place-items: center; min-block-size: 0; overflow: hidden; }
-  .lb__media :global(img) { inline-size: 100%; block-size: 100%; object-fit: contain; }
+  .lb__media :global(img) {
+    inline-size: 100%;
+    block-size: 100%;
+    /* never display larger than the photo's native size (low-res photos stay crisp) */
+    max-inline-size: var(--nw, none);
+    max-block-size: var(--nh, none);
+    object-fit: contain;
+  }
   .lb__media.is-entering { animation: lb-media-in 520ms var(--ease-out) both; }
   .lb__media.is-leaving { animation: lb-media-out 320ms var(--ease-out) both; }
   @keyframes lb-media-in {

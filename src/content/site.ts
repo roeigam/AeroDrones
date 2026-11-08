@@ -18,7 +18,7 @@ export const shared = {
   },
   hero: {
     /** 'cutout' = photo floats and blends into the glow (needs a dark-background shot or a transparent PNG). 'framed' = photo inside a HUD viewfinder frame. */
-    mode: 'cutout' as 'cutout' | 'framed',
+    mode: 'framed' as 'cutout' | 'framed',
     /** Decorative telemetry readouts around the hero drone (aria-hidden). */
     readouts: [
       { k: 'ALT', v: '120.4', u: 'm' },
@@ -84,7 +84,7 @@ const he = {
     ctaPrimary: 'צרו קשר',
     ctaSecondary: 'לבנייה שלי',
     scroll: 'גלילה',
-    imageAlt: 'רחפן FPV מותאם אישית עם מצלמת אקשן ותאורת לד', // TODO: update when the real photo arrives
+    imageAlt: 'רחפן FPV בטיסה על רקע שמי שקיעה',
   },
   sections: {
     about: { num: '01', label: 'אודות', title: 'מהשולחן לשמיים.' },
@@ -105,7 +105,7 @@ const he = {
       { value: '150+', label: 'רחפנים נבנו ותוקנו' },
       { value: '100%', label: 'נבדקים בטיסה לפני מסירה' },
     ] as { value: string; label: string }[],
-    imageAlt: 'רחפן FPV על שולחן העבודה, מוקף בציור אור', // TODO: update when the real photo arrives
+    imageAlt: 'רחפן FPV על שולחן עבודה מעץ, מוקף בכלי עבודה',
   },
   services: {
     lede: 'מבנייה מאפס ועד כיוונון עדין — כל מה שהרחפן שלך צריך, תחת קורת גג אחת.',
@@ -250,7 +250,7 @@ const en: typeof he = {
     ctaPrimary: 'Contact me',
     ctaSecondary: 'See my builds',
     scroll: 'Scroll',
-    imageAlt: 'Custom FPV drone with an action camera and LED lighting', // TODO: update when the real photo arrives
+    imageAlt: 'FPV drone in flight against a sunset sky',
   },
   sections: {
     about: { num: '01', label: 'About', title: 'From the bench to the sky.' },
@@ -271,7 +271,7 @@ const en: typeof he = {
       { value: '150+', label: 'Drones built & repaired' },
       { value: '100%', label: 'Flight-tested before handover' },
     ],
-    imageAlt: 'FPV drone on the workbench, surrounded by light painting', // TODO: update when the real photo arrives
+    imageAlt: 'FPV drone on a wooden workbench, surrounded by tools',
   },
   services: {
     lede: 'From a build from scratch to fine tuning — everything your drone needs, under one roof.',
