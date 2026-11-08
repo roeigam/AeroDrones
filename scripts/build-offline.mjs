@@ -3,12 +3,14 @@
  * Usage: npm run build:offline   → ./AeroDrones-offline/
  *
  * 1. Builds with PUBLIC_OFFLINE_BUILD=1 (astro.config.mjs switches outDir; BaseLayout drops
- *    canonical/hreflang/OG tags, which need a real URL; the contact form explains it can't send).
+ *    canonical/hreflang/OG tags, which need a real URL; the contact form explains it can't send)
+ *    and with an empty PUBLIC_WEB3FORMS_KEY (the key is useless offline; never ship it).
  * 2. Rewrites every root-relative URL ("/_astro/x.woff2", "/en/", "/") in every HTML file to a path
  *    relative to that file ("../_astro/x.woff2", "index.html", "../index.html"), including srcset
  *    and CSS url(...). Folder URLs get an explicit index.html, because file:// has no directory index.
  * 3. Removes host-only files (_headers, _redirects, og/).
- * 4. Fails loudly if any absolute path or external module script is left (those break on file://).
+ * 4. Fails loudly if any absolute path or external module script is left (those break on file://),
+ *    or if a Web3Forms key ended up in a page.
  */
 import { build } from 'astro';
 import { readdir, readFile, writeFile, rm } from 'node:fs/promises';
@@ -21,6 +23,10 @@ const OUT = path.join(root, 'AeroDrones-offline');
 
 process.env.PUBLIC_OFFLINE_BUILD = '1';
 // An empty or missing SITE_URL is fine here: the offline pages contain no absolute site URLs.
+// The contact form never sends from file:// (it hands the message to WhatsApp instead), so the
+// Web3Forms key has no use in this copy: always leave it out of files handed to the client.
+// A value set in process.env takes precedence over .env.
+process.env.PUBLIC_WEB3FORMS_KEY = '';
 
 await rm(OUT, { recursive: true, force: true });
 await build({ root });
@@ -131,6 +137,9 @@ for (const file of files) {
   ].map((m) => m[0]);
   const externalModules = [...html.matchAll(/<script[^>]*type=["']module["'][^>]*\ssrc=/g)].map((m) => m[0]);
   for (const l of [...leftovers, ...externalModules]) problems.push(`${path.relative(OUT, file)}: ${l.slice(0, 90)}`);
+
+  // Verify: no Web3Forms key embedded (see PUBLIC_WEB3FORMS_KEY above)
+  if (/name=["']access_key["'][^>]*\bvalue=["'][^"']+["']/.test(html)) problems.push(`${path.relative(OUT, file)}: Web3Forms key embedded`);
 
   // Verify: every local link/asset target exists on disk
   for (const m of html.matchAll(/\b(?:href|src)=["']((?:\.\.?\/)[^"'#?]*)/g)) {

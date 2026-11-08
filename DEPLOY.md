@@ -54,7 +54,7 @@ This creates `AeroDrones-offline/`, which is git-ignored and rebuilt from scratc
   - host files (`_headers`, `_redirects`).
 - **Fails with a clear message** if any absolute path is left.
 
-`SITE_URL` can be empty or missing; the offline pages don't use it. If `PUBLIC_WEB3FORMS_KEY` is set when building, it is still embedded, but see the contact form note below.
+`SITE_URL` can be empty or missing; the offline pages don't use it. `PUBLIC_WEB3FORMS_KEY` is always left out of the offline copy, even if it is set in `.env`: the form can't send from a local file anyway (see the contact form note below), and the build fails if a key ever ends up in a page.
 
 ### Hand it over
 1. Zip the `AeroDrones-offline` folder and send the zip.

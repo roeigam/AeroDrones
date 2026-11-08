@@ -45,6 +45,7 @@ Hebrew is the main language at `/` (RTL). English lives at `/en/` (LTR).
 - **Netlify:** `npm run build` → `dist/`. This build is unchanged; `netlify.toml` configures it, and Netlify's `URL` env feeds canonical and OG.
 - **Offline:** `npm run build:offline` → `AeroDrones-offline/` (git-ignored) for the client, opened by double-clicking `index.html` over `file://`. `scripts/build-offline.mjs`:
   - builds with `PUBLIC_OFFLINE_BUILD=1`, which drops canonical, hreflang and OG tags and makes the contact form offline-aware;
+  - always builds with an empty `PUBLIC_WEB3FORMS_KEY` (useless on `file://`; never ship the key) and fails if one is embedded;
   - rewrites every root-relative URL to a relative one, giving folder URLs an explicit `index.html`;
   - inlines module scripts and embeds the woff2 fonts as data URIs, and removes font preloads;
   - deletes host-only files;
